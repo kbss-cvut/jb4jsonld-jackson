@@ -112,6 +112,7 @@ public class JsonLdSerializationTest {
         assertTrue(contains(user.getUri(), Vocabulary.FIRST_NAME, user.getFirstName()));
         assertTrue(contains(user.getUri(), Vocabulary.LAST_NAME, user.getLastName()));
         assertTrue(contains(user.getUri(), Vocabulary.USERNAME, user.getUsername()));
+        assertTrue(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin()));
     }
 
     @Test

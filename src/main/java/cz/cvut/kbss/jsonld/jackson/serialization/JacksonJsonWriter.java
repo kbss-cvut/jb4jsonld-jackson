@@ -56,6 +56,10 @@ class JacksonJsonWriter implements cz.cvut.kbss.jsonld.serialization.JsonGenerat
             jsonGenerator.writeNumber((BigInteger) number);
         } else if (number instanceof BigDecimal) {
             jsonGenerator.writeNumber((BigDecimal) number);
+        } else if (number instanceof Short) {
+            jsonGenerator.writeNumber(number.shortValue());
+        } else if (number instanceof Byte) {
+            jsonGenerator.writeNumber(number.byteValue());
         } else {
             throw new IllegalArgumentException("Unable to write number " + number + " of type " + number.getClass());
         }
