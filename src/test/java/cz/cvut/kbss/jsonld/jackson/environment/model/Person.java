@@ -11,7 +11,7 @@ import java.net.URI;
 public class Person {
 
     @Id
-    public URI uri;
+    private URI uri;
 
     @OWLDataProperty(iri = Vocabulary.FIRST_NAME)
     private String firstName;
