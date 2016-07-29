@@ -1,8 +1,8 @@
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
+import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Generator;
 import cz.cvut.kbss.jsonld.jackson.environment.StatementCopyingHandler;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
@@ -30,6 +30,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -50,9 +52,7 @@ public class JsonLdSerializationTest {
         parser.setRDFHandler(new StatementCopyingHandler(connection));
 
         this.objectMapper = new ObjectMapper();
-        final SimpleModule module = new SimpleModule();
-        module.setSerializerModifier(new JsonLdSerializerModifier());
-        objectMapper.registerModule(module);
+        objectMapper.registerModule(new JsonLdModule());
     }
 
     private void initRepository() throws Exception {
@@ -166,6 +166,18 @@ public class JsonLdSerializationTest {
             // The question is: how should the serializer/parser behave in such situations?
             assertTrue(contains(emp.getUri(), Vocabulary.IS_MEMBER_OF, org.getUri().toString()));
             verifyUserAttributes(emp);
+        }
+    }
+
+    @Test
+    public void testSerializeCollectionOfInstances() throws Exception {
+        final Set<User> users = new HashSet<>();
+        for (int i = 0; i < Generator.randomCount(10); i++) {
+            users.add(Generator.generateUser());
+        }
+        serializeAndStore(users);
+        for (User u : users) {
+            verifyUserAttributes(u);
         }
     }
 }

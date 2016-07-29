@@ -1,0 +1,25 @@
+{
+  "@context": {
+    "firstName": "http://xmlns.com/foaf/0.1/firstName",
+    "lastName": "http://xmlns.com/foaf/0.1/lastName",
+    "accountName": "http://xmlns.com/foaf/0.1/accountName",
+    "isAdmin": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/isAdmin"
+  },
+  "@id": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld#-697813743",
+  "@type": [
+    "http://onto.fel.cvut.cz/ontologies/ufo/Person",
+    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/Employee",
+    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/User"
+  ],
+  "isAdmin": false,
+  "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/isMemberOf": {
+    "@id": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld#-82218522",
+    "@type": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/Organization",
+    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/brand": "Brandy0",
+    "http://purl.org/dc/terms/created": "Fri Jul 29 14:52:04 CEST 2016",
+    "http://www.w3.org/2000/01/rdf-schema#label": "Organization291065182"
+  },
+  "accountName": "user647104078",
+  "firstName": "FirstName647104078",
+  "lastName": "LastName647104078"
+}
