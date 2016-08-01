@@ -20,6 +20,7 @@
         <org.mockito.version>1.10.19</org.mockito.version>
         <ch.qos.logback.version>1.1.6</ch.qos.logback.version>
         <com.fasterxml.jackson.version>2.8.1</com.fasterxml.jackson.version>
+        <com.github.jsonld-java.version>0.8.3</com.github.jsonld-java.version>
     </properties>
 
     <repositories>
@@ -41,6 +42,12 @@
             <groupId>cz.cvut.kbss</groupId>
             <artifactId>jaxb-jsonld</artifactId>
             <version>0.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.jsonld-java</groupId>
+            <artifactId>jsonld-java</artifactId>
+            <version>${com.github.jsonld-java.version}</version>
         </dependency>
 
         <!-- Jackson -->
