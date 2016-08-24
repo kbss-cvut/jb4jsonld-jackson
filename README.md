@@ -4,6 +4,8 @@ JAXB-JSON-LD for Jackson is a binding of JAXB-JSON-LD for [Jackson](https://gith
 
 The core implementation of JAXB-JSON-LD can be found at [https://github.com/kbss-cvut/jaxb-jsonld](https://github.com/kbss-cvut/jaxb-jsonld).
 
+More info can be found at [https://kbss.felk.cvut.cz/web/portal/jaxb-jsonld](https://kbss.felk.cvut.cz/web/portal/jaxb-jsonld).
+
 ## Usage
 
 JAXB-JSON-LD is based on annotations from [JOPA](https://github.com/kbss-cvut/jopa), which enable POJO attributes
