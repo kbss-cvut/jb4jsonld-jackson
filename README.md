@@ -20,9 +20,13 @@ To integrate the library with Jackson, register a `cz.cvut.kbss.jsonld.jackson.J
 
 and you should be good to go. See the `JsonLdSerializionTest` for examples.
 
+See [https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld](https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld) for
+an executable example of JAXB JSON-LD for Jackson in action.
+
 ## Serialization
 
-The serializer's output has been verified to be a valid JSON-LD and is parsable by Java's JSON-LD reference implementation [jsonld-java](https://github.com/jsonld-java/jsonld-java).
+The serializer's output has been verified to be a valid JSON-LD and is parsable by Java's JSON-LD reference implementation 
+[jsonld-java](https://github.com/jsonld-java/jsonld-java).
 
 The output is basically a context-less compacted JSON-LD, which uses full IRIs for attribute names.
 
