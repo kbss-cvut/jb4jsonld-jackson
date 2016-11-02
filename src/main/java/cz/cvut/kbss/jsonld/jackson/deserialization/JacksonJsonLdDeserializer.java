@@ -1,11 +1,11 @@
 /**
  * Copyright (C) 2016 Czech Technical University in Prague
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any
  * later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -18,11 +18,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
+import cz.cvut.kbss.jsonld.ConfigParam;
+import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.deserialization.JsonLdDeserializer;
 import cz.cvut.kbss.jsonld.exception.JsonLdDeserializationException;
 
@@ -52,11 +55,19 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
         try {
             final Object input = parseJsonObject(jp);
             final List<Object> expanded = JsonLdProcessor.expand(input);
-            final JsonLdDeserializer deserializer = JsonLdDeserializer.createExpandedDeserializer();
+            final JsonLdDeserializer deserializer = JsonLdDeserializer.createExpandedDeserializer(configure(ctx));
             return deserializer.deserialize(expanded, resultType);
         } catch (JsonLdError e) {
             throw new JsonLdDeserializationException("Unable to expand the input JSON.", e);
         }
+    }
+
+    private Configuration configure(DeserializationContext context) {
+        final Configuration config = new Configuration();
+        if (!context.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)) {
+            config.set(ConfigParam.IGNORE_UNKNOWN_PROPERTIES, Boolean.TRUE.toString());
+        }
+        return config;
     }
 
     private Object parseJsonObject(JsonParser parser) throws IOException {
