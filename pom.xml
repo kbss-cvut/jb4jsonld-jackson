@@ -6,7 +6,7 @@
 
     <groupId>cz.cvut.kbss</groupId>
     <artifactId>jaxb-jsonld-jackson</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <name>JAXB JSON-LD Jackson</name>
 
     <description>JAXB JSON-LD integration for Jackson.</description>
@@ -16,7 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <cz.cvut.kbss.jaxb-jsonld.version>0.0.6</cz.cvut.kbss.jaxb-jsonld.version>
+        <cz.cvut.kbss.jaxb-jsonld.version>0.0.7</cz.cvut.kbss.jaxb-jsonld.version>
         <junit.version>4.12</junit.version>
         <org.mockito.version>1.10.19</org.mockito.version>
         <ch.qos.logback.version>1.1.6</ch.qos.logback.version>
@@ -49,6 +49,16 @@
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java</artifactId>
             <version>${com.github.jsonld-java.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Jackson -->
