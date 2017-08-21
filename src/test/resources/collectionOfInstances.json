@@ -1,36 +1,36 @@
 [
   {
-    "@id": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld#Catherine+Halsey",
+    "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Catherine+Halsey",
     "@type": [
       "http://onto.fel.cvut.cz/ontologies/ufo/Person",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/Employee",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/User"
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee",
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User"
     ],
-    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/isAdmin": true,
+    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin": true,
     "http://xmlns.com/foaf/0.1/accountName": "halsey@unsc.org",
     "http://xmlns.com/foaf/0.1/firstName": "Catherine",
     "http://xmlns.com/foaf/0.1/lastName": "Halsey"
   },
   {
-    "@id": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld#Thomas+Lasky",
+    "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Thomas+Lasky",
     "@type": [
       "http://onto.fel.cvut.cz/ontologies/ufo/Person",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/Employee",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/User"
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee",
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User"
     ],
-    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/isAdmin": false,
+    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin": false,
     "http://xmlns.com/foaf/0.1/accountName": "lasky@unsc.org",
     "http://xmlns.com/foaf/0.1/firstName": "Thomas",
     "http://xmlns.com/foaf/0.1/lastName": "Lasky"
   },
   {
-    "@id": "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld#Sarah+Palmer",
+    "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Sarah+Palmer",
     "@type": [
       "http://onto.fel.cvut.cz/ontologies/ufo/Person",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/Employee",
-      "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/User"
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee",
+      "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User"
     ],
-    "http://krizik.felk.cvut.cz/ontologies/jaxb-jsonld/isAdmin": false,
+    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin": false,
     "http://xmlns.com/foaf/0.1/accountName": "palmer@unsc.org",
     "http://xmlns.com/foaf/0.1/firstName": "Sarah",
     "http://xmlns.com/foaf/0.1/lastName": "Palmer"

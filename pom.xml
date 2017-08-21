@@ -5,18 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cz.cvut.kbss.jsonld</groupId>
-    <artifactId>jaxb-jsonld-jackson</artifactId>
-    <version>0.0.9</version>
-    <name>JAXB JSON-LD Jackson</name>
+    <artifactId>jb4jsonld-jackson</artifactId>
+    <version>0.1.0</version>
+    <name>JB4JSON-LD-Jackson</name>
 
-    <description>JAXB JSON-LD integration for Jackson.</description>
+    <description>JB4JSON-LD integration for Jackson.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <cz.cvut.kbss.jaxb-jsonld.version>0.0.9</cz.cvut.kbss.jaxb-jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.1.0</cz.cvut.kbss.jb4jsonld.version>
         <junit.version>4.12</junit.version>
         <org.mockito.version>1.10.19</org.mockito.version>
         <ch.qos.logback.version>1.1.6</ch.qos.logback.version>
@@ -38,11 +38,11 @@
     </repositories>
 
     <dependencies>
-        <!-- JAXB JSON-LD core -->
+        <!-- JB4JSON-LD core -->
         <dependency>
-            <groupId>cz.cvut.kbss</groupId>
-            <artifactId>jaxb-jsonld</artifactId>
-            <version>${cz.cvut.kbss.jaxb-jsonld.version}</version>
+            <groupId>cz.cvut.kbss.jsonld</groupId>
+            <artifactId>jb4jsonld</artifactId>
+            <version>${cz.cvut.kbss.jb4jsonld.version}</version>
         </dependency>
 
         <dependency>
@@ -263,20 +263,23 @@
     </organization>
 
     <scm>
-        <url>https://github.com/kbss-cvut/jaxb-jsonld-jackson.git</url>
-        <connection>scm:git:https://github.com/kbss-cvut/jaxb-jsonld-jackson.git</connection>
+        <url>https://github.com/kbss-cvut/jb4jsonld-jackson.git</url>
+        <connection>scm:git:https://github.com/kbss-cvut/jb4jsonld-jackson.git</connection>
     </scm>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>kbss</id>
-            <name>KBSS Maven 2 Repository</name>
-            <url>sftp://kbss.felk.cvut.cz/var/www/m2repo</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <site>
-            <id>jaxb-jsonld-jackson</id>
+            <id>jb4jsonld-jackson</id>
             <name>JAXB-JSON-LD for Jackson</name>
-            <url>https://github.com/kbss-cvut/jaxb-jsonld-jackson</url>
+            <url>https://github.com/kbss-cvut/jb4jsonld-jackson</url>
         </site>
     </distributionManagement>
 </project>
