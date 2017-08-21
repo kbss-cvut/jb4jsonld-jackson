@@ -40,4 +40,12 @@ input is.
 There are two ways to get JB4JSON-LD-Jackson:
 
 * Clone repository/download zip and build it with Maven,
-* Use a [Maven dependency](http://search.maven.org/#search%7Cga%7C1%7Ccz.cvut.kbss.jsonld).
+* Use a [Maven dependency](http://search.maven.org/#search%7Cga%7C1%7Ccz.cvut.kbss.jsonld):
+
+```XML
+<dependency>
+    <groupId>cz.cvut.kbss.jsonld</groupId>
+    <artifactId>jb4jsonld-jackson</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
