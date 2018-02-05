@@ -1,11 +1,11 @@
 /**
  * Copyright (C) 2017 Czech Technical University in Prague
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any
  * later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -176,9 +176,7 @@ public class JsonLdSerializationTest {
         verifyOrganizationAttributes(org);
         for (Employee emp : org.getEmployees()) {
             assertTrue(contains(org.getUri(), Vocabulary.HAS_MEMBER, emp.getUri()));
-            // JSON-LD implementations store IRIs of other individuals as plain strings, which causes them to be parsed as strings by Sesame
-            // The question is: how should the serializer/parser behave in such situations?
-            assertTrue(contains(emp.getUri(), Vocabulary.IS_MEMBER_OF, org.getUri().toString()));
+            assertTrue(contains(emp.getUri(), Vocabulary.IS_MEMBER_OF, org.getUri()));
             verifyUserAttributes(emp);
         }
     }

@@ -46,6 +46,5 @@ There are two ways to get JB4JSON-LD-Jackson:
 <dependency>
     <groupId>cz.cvut.kbss.jsonld</groupId>
     <artifactId>jb4jsonld-jackson</artifactId>
-    <version>0.1.0</version>
 </dependency>
 ```
