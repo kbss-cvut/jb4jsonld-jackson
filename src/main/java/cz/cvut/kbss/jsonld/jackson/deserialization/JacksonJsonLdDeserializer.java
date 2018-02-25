@@ -1,11 +1,11 @@
 /**
  * Copyright (C) 2017 Czech Technical University in Prague
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any
  * later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.github.jsonldjava.core.JsonLdError;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import cz.cvut.kbss.jsonld.ConfigParam;
@@ -62,14 +63,6 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
         }
     }
 
-    private Configuration configure(DeserializationContext context) {
-        final Configuration config = new Configuration();
-        if (!context.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)) {
-            config.set(ConfigParam.IGNORE_UNKNOWN_PROPERTIES, Boolean.TRUE.toString());
-        }
-        return config;
-    }
-
     private Object parseJsonObject(JsonParser parser) throws IOException {
         Object value = null;
         final JsonToken initialToken = parser.getCurrentToken();
@@ -90,5 +83,19 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
             value = null;
         }
         return value;
+    }
+
+    private Configuration configure(DeserializationContext context) {
+        final Configuration config = new Configuration();
+        if (!context.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)) {
+            config.set(ConfigParam.IGNORE_UNKNOWN_PROPERTIES, Boolean.TRUE.toString());
+        }
+        return config;
+    }
+
+    @Override
+    public Object deserializeWithType(JsonParser jp, DeserializationContext ctxt,
+                                      TypeDeserializer typeDeserializer) throws IOException {
+        return deserialize(jp, ctxt);
     }
 }

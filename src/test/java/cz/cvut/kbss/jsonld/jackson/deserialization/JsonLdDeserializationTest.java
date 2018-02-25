@@ -22,6 +22,7 @@ import cz.cvut.kbss.jsonld.jackson.environment.Environment;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
+import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -118,5 +119,15 @@ public class JsonLdDeserializationTest {
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
         verifyUserAttributes(USERS.get(HALSEY_URI), result);
+    }
+
+    /**
+     * @see JsonLdSerializationTest#serializationIgnoresJsonTypeInfoConfiguration()
+     */
+    @Test
+    public void deserializationIgnoresJsonTypeInfo() throws Exception {
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Employee result = objectMapper.readValue(input, Employee.class);
+        assertNotNull(result);
     }
 }
