@@ -1,10 +1,12 @@
 # Java Binding for JSON-LD - Jackson
 
+[![Build Status](https://kbss.felk.cvut.cz/jenkins/buildStatus/icon?job=jaxb-jsonld-jackson)](https://kbss.felk.cvut.cz/jenkins/job/jaxb-jsonld-jackson)
+
 Java Binding for JSON-LD - Jackson (JB4JSON-LD-Jackson) is a binding of JB4JSON-LD for [Jackson](https://github.com/FasterXML/jackson).
 
 The core implementation of JB4JSON-LD with a mapping example can be found at [https://github.com/kbss-cvut/jb4jsonld](https://github.com/kbss-cvut/jb4jsonld).
 
-More info can be found at [https://kbss.felk.cvut.cz/web/portal/jb4jsonld](https://kbss.felk.cvut.cz/web/portal/jb4jsonld).
+More info can be found at [https://kbss.felk.cvut.cz/web/kbss/jb4json-ld](https://kbss.felk.cvut.cz/web/kbss/jb4json-ld).
 
 ## Usage
 
@@ -46,6 +48,5 @@ There are two ways to get JB4JSON-LD-Jackson:
 <dependency>
     <groupId>cz.cvut.kbss.jsonld</groupId>
     <artifactId>jb4jsonld-jackson</artifactId>
-    <version>0.1.0</version>
 </dependency>
 ```
