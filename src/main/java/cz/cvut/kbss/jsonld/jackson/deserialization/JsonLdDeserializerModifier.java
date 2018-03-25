@@ -18,15 +18,22 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 
 public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
+
+    private final Configuration configuration;
+
+    public JsonLdDeserializerModifier(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
                                                   JsonDeserializer<?> deserializer) {
         if (BeanAnnotationProcessor.isOwlClassEntity(beanDesc.getBeanClass())) {
-            return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass());
+            return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass(), configuration);
         }
         return deserializer;
     }

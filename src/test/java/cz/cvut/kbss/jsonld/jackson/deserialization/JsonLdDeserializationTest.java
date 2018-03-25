@@ -1,11 +1,11 @@
 /**
  * Copyright (C) 2017 Czech Technical University in Prague
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any
  * later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -17,10 +17,12 @@ package cz.cvut.kbss.jsonld.jackson.deserialization;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Environment;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
+import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
 import org.junit.Before;
@@ -49,6 +51,7 @@ public class JsonLdDeserializationTest {
     private static final String[] ORG_BRANDS = {"Spartan-II", "Mjolnir IV"};
 
     private ObjectMapper objectMapper;
+    private JsonLdModule jsonLdModule;
 
     private static Map<URI, User> initUsers() {
         final Map<URI, User> map = new HashMap<>();
@@ -61,7 +64,8 @@ public class JsonLdDeserializationTest {
     @Before
     public void setUp() {
         this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JsonLdModule());
+        this.jsonLdModule = new JsonLdModule();
+        objectMapper.registerModule(jsonLdModule);
     }
 
     @Test
@@ -129,5 +133,13 @@ public class JsonLdDeserializationTest {
         final String input = Environment.readData("objectWithSingularReference.json");
         final Employee result = objectMapper.readValue(input, Employee.class);
         assertNotNull(result);
+    }
+
+    @Test
+    public void deserializationSupportsPolymorphism() throws Exception {
+        jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.environment.model");
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Person result = objectMapper.readValue(input, Person.class);
+        assertTrue(result instanceof Employee);
     }
 }

@@ -38,17 +38,19 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    private final Configuration configuration;
+
     private final Class<?> resultType;
 
-    public JacksonJsonLdDeserializer(JsonDeserializer<?> delegatee, Class<?> resultType) {
+    public JacksonJsonLdDeserializer(JsonDeserializer<?> delegatee, Class<?> resultType, Configuration configuration) {
         super(delegatee);
         this.resultType = resultType;
+        this.configuration = configuration;
     }
 
     @Override
     protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> newDelegatee) {
-        // TODO Is the null ok? Perhaps we should use a different base class, we are not delegating deserialization to anything else anyway
-        return new JacksonJsonLdDeserializer(newDelegatee, null);
+        return new JacksonJsonLdDeserializer(newDelegatee, resultType, configuration);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
     }
 
     private Configuration configure(DeserializationContext context) {
-        final Configuration config = new Configuration();
+        final Configuration config = new Configuration(configuration);
         if (!context.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)) {
             config.set(ConfigParam.IGNORE_UNKNOWN_PROPERTIES, Boolean.TRUE.toString());
         }

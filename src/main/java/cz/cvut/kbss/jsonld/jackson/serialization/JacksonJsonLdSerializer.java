@@ -18,14 +18,22 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.serialization.JsonLdSerializer;
 
 class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
 
+    private final Configuration configuration;
+
+    JacksonJsonLdSerializer(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
     public void serialize(T value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
         final cz.cvut.kbss.jsonld.serialization.JsonGenerator writer = new JacksonJsonWriter(jsonGenerator);
-        final JsonLdSerializer serializer = JsonLdSerializer.createCompactedJsonLdSerializer(writer);
+        final JsonLdSerializer serializer =
+                JsonLdSerializer.createCompactedJsonLdSerializer(writer, new Configuration(configuration));
         serializer.serialize(value);
     }
 

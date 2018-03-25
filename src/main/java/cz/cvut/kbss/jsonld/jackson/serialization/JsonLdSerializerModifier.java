@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 
 /**
@@ -25,11 +26,17 @@ import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
  */
 public class JsonLdSerializerModifier extends BeanSerializerModifier {
 
+    private final Configuration configuration;
+
+    public JsonLdSerializerModifier(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
                                               JsonSerializer<?> serializer) {
         if (BeanAnnotationProcessor.isOwlClassEntity(beanDesc.getBeanClass())) {
-            return new JacksonJsonLdSerializer<>();
+            return new JacksonJsonLdSerializer<>(configuration);
         }
         return serializer;
     }
