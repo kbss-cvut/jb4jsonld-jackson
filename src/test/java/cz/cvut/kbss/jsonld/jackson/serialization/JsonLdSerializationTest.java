@@ -14,7 +14,11 @@ package cz.cvut.kbss.jsonld.jackson.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
+import cz.cvut.kbss.jopa.model.annotations.Id;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
+import cz.cvut.kbss.jopa.model.annotations.Types;
 import cz.cvut.kbss.jopa.vocabulary.RDF;
+import cz.cvut.kbss.jsonld.exception.MissingTypeInfoException;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Generator;
 import cz.cvut.kbss.jsonld.jackson.environment.StatementCopyingHandler;
@@ -24,7 +28,9 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.vocabulary.RDFS;
@@ -41,13 +47,18 @@ import org.openrdf.sail.memory.MemoryStore;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertTrue;
 
 public class JsonLdSerializationTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private Repository repository;
     private RepositoryConnection connection;
@@ -202,5 +213,37 @@ public class JsonLdSerializationTest {
         assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.PERSON)));
         assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.USER)));
         assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.EMPLOYEE)));
+    }
+
+    @Test
+    public void serializationSupportsClassesWithoutOWLClassAnnotationButWithTypes() throws Exception {
+        final PersonNoOWLClass person = new PersonNoOWLClass();
+        person.uri = Generator.generateUri();
+        person.label = "test";
+        person.types = Collections.singleton(Vocabulary.PERSON);
+        serializeAndStore(person);
+        assertTrue(contains(person.uri, RDF.TYPE, URI.create(Vocabulary.PERSON)));
+        assertTrue(contains(person.uri, cz.cvut.kbss.jopa.vocabulary.RDFS.LABEL, person.label));
+    }
+
+    public static class PersonNoOWLClass {
+
+        @Id
+        private URI uri;
+
+        @OWLDataProperty(iri = cz.cvut.kbss.jopa.vocabulary.RDFS.LABEL)
+        private String label;
+
+        @Types
+        private Set<String> types;
+    }
+
+    @Test
+    public void serializationFailsForInstanceWithoutTypeInfo() throws Exception {
+        final PersonNoOWLClass person = new PersonNoOWLClass();
+        person.uri = Generator.generateUri();
+        person.label = "test";
+        thrown.expectCause(isA(MissingTypeInfoException.class));
+        serializeAndStore(person);
     }
 }
