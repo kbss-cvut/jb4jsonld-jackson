@@ -69,14 +69,14 @@ public class JacksonJsonWriterTest {
 
     @Test
     public void writeNumberFloatWritesFloat() throws Exception {
-        final Float number = Float.MIN_VALUE;
+        final float number = Float.MIN_VALUE;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
     public void writeNumberDoubleWritesDouble() throws Exception {
-        final Double number = Double.MAX_VALUE;
+        final double number = Double.MAX_VALUE;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }

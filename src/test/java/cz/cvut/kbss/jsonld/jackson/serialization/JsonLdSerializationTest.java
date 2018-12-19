@@ -13,11 +13,11 @@
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jsonldjava.sesame.SesameJSONLDParserFactory;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.Types;
 import cz.cvut.kbss.jopa.vocabulary.RDF;
+import cz.cvut.kbss.jopa.vocabulary.RDFS;
 import cz.cvut.kbss.jsonld.exception.MissingTypeInfoException;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Generator;
@@ -26,23 +26,19 @@ import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.rio.RDFParserFactory;
-import org.openrdf.sail.memory.MemoryStore;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -68,24 +64,23 @@ public class JsonLdSerializationTest {
     private ObjectMapper objectMapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initRepository();
-        final RDFParserFactory factory = new SesameJSONLDParserFactory();
-        this.parser = factory.getParser();
+        this.parser = Rio.createParser(RDFFormat.JSONLD);
         parser.setRDFHandler(new StatementCopyingHandler(connection));
 
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JsonLdModule());
     }
 
-    private void initRepository() throws Exception {
+    private void initRepository() {
         this.repository = new SailRepository(new MemoryStore());
         repository.initialize();
         this.connection = repository.getConnection();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         connection.close();
         repository.shutDown();
     }
@@ -107,11 +102,11 @@ public class JsonLdSerializationTest {
         connection.commit();
     }
 
-    private boolean contains(URI subject, String property, Object value) throws Exception {
+    private boolean contains(URI subject, String property, Object value) {
         final ValueFactory vf = connection.getValueFactory();
         Value rdfVal = null;
         if (value instanceof URI) {
-            rdfVal = vf.createURI(value.toString());
+            rdfVal = vf.createIRI(value.toString());
         } else if (value instanceof Integer) {
             rdfVal = vf.createLiteral((Integer) value);
         } else if (value instanceof Long) {
@@ -125,11 +120,11 @@ public class JsonLdSerializationTest {
         } else if (value instanceof String) {
             rdfVal = vf.createLiteral(value.toString());
         }
-        return connection
-                .getStatements(vf.createURI(subject.toString()), vf.createURI(property), rdfVal, false).hasNext();
+        return connection.getStatements(vf.createIRI(subject.toString()), vf.createIRI(property), rdfVal, false)
+                         .hasNext();
     }
 
-    private void verifyUserAttributes(User user) throws Exception {
+    private void verifyUserAttributes(User user) {
         assertTrue(contains(user.getUri(), RDF.TYPE, URI.create(Vocabulary.PERSON)));
         assertTrue(contains(user.getUri(), RDF.TYPE, URI.create(Vocabulary.USER)));
         assertTrue(contains(user.getUri(), Vocabulary.FIRST_NAME, user.getFirstName()));
@@ -148,8 +143,8 @@ public class JsonLdSerializationTest {
         verifyOrganizationAttributes(org);
     }
 
-    private void verifyOrganizationAttributes(Organization org) throws Exception {
-        assertTrue(contains(org.getUri(), RDFS.LABEL.stringValue(), org.getName()));
+    private void verifyOrganizationAttributes(Organization org) {
+        assertTrue(contains(org.getUri(), RDFS.LABEL, org.getName()));
         // There is currently a grey zone of representing dates - we're using long timestamp, but RDF4J parses it XML integer
         assertTrue(contains(org.getUri(), Vocabulary.DATE_CREATED, null));
         for (String brand : org.getBrands()) {
