@@ -1,16 +1,14 @@
 /**
  * Copyright (C) 2017 Czech Technical University in Prague
  * <p>
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details. You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details. You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
@@ -25,17 +23,17 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class JsonLdDeserializationTest {
+class JsonLdDeserializationTest {
 
     private static final URI HALSEY_URI = URI
             .create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Catherine+Halsey");
@@ -61,15 +59,15 @@ public class JsonLdDeserializationTest {
         return map;
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.objectMapper = new ObjectMapper();
         this.jsonLdModule = new JsonLdModule();
         objectMapper.registerModule(jsonLdModule);
     }
 
     @Test
-    public void testDeserializeInstanceWithDataProperties() throws Exception {
+    void testDeserializeInstanceWithDataProperties() throws Exception {
         final String input = Environment.readData("objectWithDataProperties.json");
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
@@ -86,7 +84,7 @@ public class JsonLdDeserializationTest {
     }
 
     @Test
-    public void testDeserializeInstanceWithSingularObjectProperty() throws Exception {
+    void testDeserializeInstanceWithSingularObjectProperty() throws Exception {
         final String input = Environment.readData("objectWithSingularReference.json");
         final Employee result = objectMapper.readValue(input, Employee.class);
         verifyUserAttributes(USERS.get(HALSEY_URI), result);
@@ -104,7 +102,7 @@ public class JsonLdDeserializationTest {
     }
 
     @Test
-    public void testDeserializeCollectionOfInstances() throws Exception {
+    void testDeserializeCollectionOfInstances() throws Exception {
         final String input = Environment.readData("collectionOfInstances.json");
         final List<Employee> result = objectMapper.readValue(input, new TypeReference<List<Employee>>() {
         });
@@ -117,7 +115,7 @@ public class JsonLdDeserializationTest {
     }
 
     @Test
-    public void testSupportForIgnoringUnknownProperties() throws Exception {
+    void testSupportForIgnoringUnknownProperties() throws Exception {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         final String input = Environment.readData("objectWithUnknownProperty.json");
         final User result = objectMapper.readValue(input, User.class);
@@ -129,14 +127,14 @@ public class JsonLdDeserializationTest {
      * @see JsonLdSerializationTest#serializationIgnoresJsonTypeInfoConfiguration()
      */
     @Test
-    public void deserializationIgnoresJsonTypeInfo() throws Exception {
+    void deserializationIgnoresJsonTypeInfo() throws Exception {
         final String input = Environment.readData("objectWithSingularReference.json");
         final Employee result = objectMapper.readValue(input, Employee.class);
         assertNotNull(result);
     }
 
     @Test
-    public void deserializationSupportsPolymorphism() throws Exception {
+    void deserializationSupportsPolymorphism() throws Exception {
         jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.environment.model");
         final String input = Environment.readData("objectWithSingularReference.json");
         final Person result = objectMapper.readValue(input, Person.class);

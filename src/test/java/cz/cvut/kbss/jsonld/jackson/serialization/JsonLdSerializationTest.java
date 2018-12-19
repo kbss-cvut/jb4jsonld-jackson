@@ -12,6 +12,7 @@
  */
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
@@ -34,11 +35,9 @@ import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,13 +47,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.isA;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonLdSerializationTest {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private Repository repository;
     private RepositoryConnection connection;
@@ -63,8 +62,8 @@ public class JsonLdSerializationTest {
 
     private ObjectMapper objectMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         initRepository();
         this.parser = Rio.createParser(RDFFormat.JSONLD);
         parser.setRDFHandler(new StatementCopyingHandler(connection));
@@ -79,14 +78,14 @@ public class JsonLdSerializationTest {
         this.connection = repository.getConnection();
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         connection.close();
         repository.shutDown();
     }
 
     @Test
-    public void testSerializeInstanceWithDataProperties() throws Exception {
+    void testSerializeInstanceWithDataProperties() throws Exception {
         final User user = Generator.generateUser();
         serializeAndStore(user);
         verifyUserAttributes(user);
@@ -134,7 +133,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void testSerializeInstanceWithSingularReference() throws Exception {
+    void testSerializeInstanceWithSingularReference() throws Exception {
         final Employee employee = Generator.generateEmployee();
         final Organization org = employee.getEmployer();
         serializeAndStore(employee);
@@ -153,7 +152,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void testSerializeInstanceWithPluralReference() throws Exception {
+    void testSerializeInstanceWithPluralReference() throws Exception {
         final Organization org = Generator.generateOrganization();
         generateEmployeesForOrganization(org, false);
         serializeAndStore(org);
@@ -173,7 +172,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void testSerializeInstanceWithPluralReferenceAndBackwardReferences() throws Exception {
+    void testSerializeInstanceWithPluralReferenceAndBackwardReferences() throws Exception {
         final Organization org = Generator.generateOrganization();
         generateEmployeesForOrganization(org, true);
         serializeAndStore(org);
@@ -186,7 +185,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void testSerializeCollectionOfInstances() throws Exception {
+    void testSerializeCollectionOfInstances() throws Exception {
         final Set<User> users = new HashSet<>();
         for (int i = 0; i < Generator.randomCount(10); i++) {
             users.add(Generator.generateUser());
@@ -211,7 +210,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void serializationSupportsClassesWithoutOWLClassAnnotationButWithTypes() throws Exception {
+    void serializationSupportsClassesWithoutOWLClassAnnotationButWithTypes() throws Exception {
         final PersonNoOWLClass person = new PersonNoOWLClass();
         person.uri = Generator.generateUri();
         person.label = "test";
@@ -221,7 +220,7 @@ public class JsonLdSerializationTest {
         assertTrue(contains(person.uri, cz.cvut.kbss.jopa.vocabulary.RDFS.LABEL, person.label));
     }
 
-    public static class PersonNoOWLClass {
+    private static class PersonNoOWLClass {
 
         @Id
         private URI uri;
@@ -234,11 +233,11 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    public void serializationFailsForInstanceWithoutTypeInfo() throws Exception {
+    void serializationFailsForInstanceWithoutTypeInfo() {
         final PersonNoOWLClass person = new PersonNoOWLClass();
         person.uri = Generator.generateUri();
         person.label = "test";
-        thrown.expectCause(isA(MissingTypeInfoException.class));
-        serializeAndStore(person);
+        final JsonMappingException result = assertThrows(JsonMappingException.class, () -> serializeAndStore(person));
+        assertThat(result.getCause(), is(instanceOf(MissingTypeInfoException.class)));
     }
 }
