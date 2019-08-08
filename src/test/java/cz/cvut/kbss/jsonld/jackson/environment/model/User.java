@@ -14,6 +14,7 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
@@ -31,6 +32,10 @@ public class User extends Person {
 
     @OWLAnnotationProperty(iri = Vocabulary.IS_ADMIN)
     private Boolean admin;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OWLDataProperty(iri = Vocabulary.PASSWORD)
+    private String password;
 
     public User() {
     }
@@ -57,5 +62,13 @@ public class User extends Person {
 
     public void setAdmin(Boolean admin) {
         this.admin = admin;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

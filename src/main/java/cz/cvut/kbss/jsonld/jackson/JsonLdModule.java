@@ -1,22 +1,22 @@
 /**
  * Copyright (C) 2017 Czech Technical University in Prague
  * <p>
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details. You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details. You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package cz.cvut.kbss.jsonld.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.Configuration;
+import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
+import cz.cvut.kbss.jsonld.jackson.common.JsonPropertyAccessResolver;
 import cz.cvut.kbss.jsonld.jackson.deserialization.JsonLdDeserializerModifier;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializerModifier;
 
@@ -34,8 +34,9 @@ public class JsonLdModule extends SimpleModule {
     }
 
     private void init() {
-        setSerializerModifier(new JsonLdSerializerModifier(configuration));
-        setDeserializerModifier(new JsonLdDeserializerModifier(configuration));
+        final PropertyAccessResolver accessResolver = new JsonPropertyAccessResolver();
+        setSerializerModifier(new JsonLdSerializerModifier(configuration, accessResolver));
+        setDeserializerModifier(new JsonLdDeserializerModifier(configuration, accessResolver));
     }
 
     /**

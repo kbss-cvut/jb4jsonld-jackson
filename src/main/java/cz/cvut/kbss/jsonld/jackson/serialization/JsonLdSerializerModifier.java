@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
+import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
 
 /**
  * Main point of integration of the JSON-LD serialization implementation into Jackson.
@@ -26,8 +27,9 @@ public class JsonLdSerializerModifier extends BeanSerializerModifier {
 
     private final Configuration configuration;
 
-    public JsonLdSerializerModifier(Configuration configuration) {
+    public JsonLdSerializerModifier(Configuration configuration, PropertyAccessResolver propertyAccessResolver) {
         this.configuration = configuration;
+        BeanAnnotationProcessor.setPropertyAccessResolver(propertyAccessResolver);
     }
 
     @Override

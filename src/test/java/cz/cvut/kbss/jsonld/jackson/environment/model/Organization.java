@@ -12,6 +12,7 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import cz.cvut.kbss.jopa.vocabulary.RDFS;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
@@ -43,6 +44,10 @@ public class Organization {
 
     @OWLObjectProperty(iri = Vocabulary.HAS_MEMBER)
     private Set<Employee> employees;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OWLAnnotationProperty(iri = Vocabulary.EMPLOYEE_COUNT)
+    private Integer employeeCount;
 
     public URI getUri() {
         return uri;
@@ -98,5 +103,13 @@ public class Organization {
             this.employees = new HashSet<>();
         }
         employees.add(employee);
+    }
+
+    public Integer getEmployeeCount() {
+        return employeeCount;
+    }
+
+    public void setEmployeeCount(Integer employeeCount) {
+        this.employeeCount = employeeCount;
     }
 }

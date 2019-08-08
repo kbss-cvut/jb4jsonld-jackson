@@ -140,4 +140,12 @@ class JsonLdDeserializationTest {
         final Person result = objectMapper.readValue(input, Person.class);
         assertTrue(result instanceof Employee);
     }
+
+    @Test
+    void deserializationSkipsPropertiesMappedToFieldsWithReadOnlyAccess() throws Exception {
+        final String input = Environment.readData("objectWithReadOnlyProperty.json");
+        final Organization result = objectMapper.readValue(input, Organization.class);
+        assertNotNull(result);
+        assertNull(result.getEmployeeCount());
+    }
 }

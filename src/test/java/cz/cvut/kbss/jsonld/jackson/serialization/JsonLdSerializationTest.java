@@ -50,8 +50,7 @@ import java.util.Set;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonLdSerializationTest {
 
@@ -74,7 +73,7 @@ public class JsonLdSerializationTest {
 
     private void initRepository() {
         this.repository = new SailRepository(new MemoryStore());
-        repository.initialize();
+        repository.init();
         this.connection = repository.getConnection();
     }
 
@@ -239,5 +238,13 @@ public class JsonLdSerializationTest {
         person.label = "test";
         final JsonMappingException result = assertThrows(JsonMappingException.class, () -> serializeAndStore(person));
         assertThat(result.getCause(), is(instanceOf(MissingTypeInfoException.class)));
+    }
+
+    @Test
+    void serializationSkipsFieldsWithWriteOnlyAccess() throws Exception {
+        final User user = Generator.generateUser();
+        user.setPassword("test-117");
+        serializeAndStore(user);
+        assertFalse(contains(user.getUri(), Vocabulary.PASSWORD, null));
     }
 }

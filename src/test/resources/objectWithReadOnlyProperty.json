@@ -1,0 +1,11 @@
+{
+  "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#UNSC",
+  "@type": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Organization",
+  "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/brand": [
+    "Spartan-II",
+    "Mjolnir IV"
+  ],
+  "http://purl.org/dc/terms/created": 1536304147536,
+  "http://www.w3.org/2000/01/rdf-schema#label": "UNSC",
+  "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/employeeCount": 5
+}
