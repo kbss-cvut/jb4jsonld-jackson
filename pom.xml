@@ -16,13 +16,13 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.3.8</cz.cvut.kbss.jb4jsonld.version>
-        <org.junit.jupiter.version>5.2.0</org.junit.jupiter.version>
-        <org.mockito.version>2.19.1</org.mockito.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.4.0</cz.cvut.kbss.jb4jsonld.version>
+        <org.junit.jupiter.version>5.5.1</org.junit.jupiter.version>
+        <org.mockito.version>2.28.2</org.mockito.version>
         <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
         <com.fasterxml.jackson.version>2.9.9</com.fasterxml.jackson.version>
-        <com.github.jsonld-java.version>0.12.4</com.github.jsonld-java.version>
-        <org.eclipse.rdf4j.version>2.5.2</org.eclipse.rdf4j.version>
+        <com.github.jsonld-java.version>0.12.5</com.github.jsonld-java.version>
+        <org.eclipse.rdf4j.version>2.5.3</org.eclipse.rdf4j.version>
     </properties>
 
     <dependencies>
@@ -66,6 +66,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${org.junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
             <version>${org.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
@@ -182,19 +188,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
+                <version>2.22.2</version>
             </plugin>
 
             <!-- Code coverage plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.4</version>
                 <executions>
                     <execution>
                         <goals>
