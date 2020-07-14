@@ -16,9 +16,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.6.0</cz.cvut.kbss.jb4jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.7.0</cz.cvut.kbss.jb4jsonld.version>
         <org.junit.jupiter.version>5.6.2</org.junit.jupiter.version>
-        <org.mockito.version>2.28.2</org.mockito.version>
+        <org.mockito.version>3.4.0</org.mockito.version>
         <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
         <com.fasterxml.jackson.version>2.11.1</com.fasterxml.jackson.version>
         <com.github.jsonld-java.version>0.13.0</com.github.jsonld-java.version>
