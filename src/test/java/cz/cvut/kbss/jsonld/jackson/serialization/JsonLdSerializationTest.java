@@ -29,6 +29,8 @@ import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
+import cz.cvut.kbss.jsonld.serialization.JsonNodeFactory;
+import cz.cvut.kbss.jsonld.serialization.ValueSerializer;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.repository.Repository;
@@ -61,6 +63,7 @@ public class JsonLdSerializationTest {
 
     private RDFParser parser;
 
+    private JsonLdModule module;
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -69,8 +72,9 @@ public class JsonLdSerializationTest {
         this.parser = Rio.createParser(RDFFormat.JSONLD);
         parser.setRDFHandler(new StatementCopyingHandler(connection));
 
+        this.module = new JsonLdModule();
         this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JsonLdModule());
+        objectMapper.registerModule(module);
     }
 
     private void initRepository() {
@@ -248,5 +252,15 @@ public class JsonLdSerializationTest {
         user.setPassword("test-117");
         serializeAndStore(user);
         assertFalse(contains(user.getUri(), Vocabulary.PASSWORD, null));
+    }
+
+    @Test
+    void serializationSupportsCustomSerializers() throws Exception {
+        final ValueSerializer<Boolean> custom = (value, ctx) -> JsonNodeFactory.createLiteralNode(ctx.getAttributeId(), value.toString());
+        module.registerSerializer(Boolean.class, custom);
+        final User user = Generator.generateUser();
+        serializeAndStore(user);
+        assertFalse(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin()));
+        assertTrue(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin().toString()));
     }
 }

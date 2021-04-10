@@ -18,15 +18,22 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.github.jsonldjava.utils.Obj;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.serialization.JsonLdSerializer;
+import cz.cvut.kbss.jsonld.serialization.ValueSerializer;
+
+import java.util.Map;
 
 class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
 
     private final Configuration configuration;
 
-    JacksonJsonLdSerializer(Configuration configuration) {
+    private final Map<Class<?>, ValueSerializer<?>> commonSerializers;
+
+    JacksonJsonLdSerializer(Configuration configuration, Map<Class<?>, ValueSerializer<?>> commonSerializers) {
         this.configuration = configuration;
+        this.commonSerializers = commonSerializers;
     }
 
     @Override
@@ -34,6 +41,7 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
         final cz.cvut.kbss.jsonld.serialization.JsonGenerator writer = new JacksonJsonWriter(jsonGenerator);
         final JsonLdSerializer serializer =
                 JsonLdSerializer.createCompactedJsonLdSerializer(writer, new Configuration(configuration));
+        commonSerializers.forEach((type, valueSerializer) -> serializer.registerSerializer((Class) type, (ValueSerializer) valueSerializer));
         serializer.serialize(value);
     }
 
