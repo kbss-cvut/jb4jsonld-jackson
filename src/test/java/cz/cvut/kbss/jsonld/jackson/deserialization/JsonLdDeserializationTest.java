@@ -1,16 +1,14 @@
 /**
  * Copyright (C) 2022 Czech Technical University in Prague
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details. You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details. You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
@@ -18,6 +16,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cvut.kbss.jsonld.ConfigParam;
+import cz.cvut.kbss.jsonld.deserialization.DeserializationContext;
+import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Environment;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
@@ -34,6 +34,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class JsonLdDeserializationTest {
 
@@ -149,5 +153,23 @@ class JsonLdDeserializationTest {
         final Organization result = objectMapper.readValue(input, Organization.class);
         assertNotNull(result);
         assertNull(result.getEmployeeCount());
+    }
+
+    @Test
+    void deserializationSupportsCustomDeserializers() throws Exception {
+        final ValueDeserializer<Boolean> deserializer = spy(new CustomDeserializer());
+        jsonLdModule.registerDeserializer(Boolean.class, deserializer);
+        final String input = Environment.readData("objectWithDataProperties.json");
+        final User result = objectMapper.readValue(input, User.class);
+        assertNotNull(result);
+        assertNull(result.getAdmin());
+        verify(deserializer).deserialize(anyMap(), any(DeserializationContext.class));
+    }
+
+    static class CustomDeserializer implements ValueDeserializer<Boolean> {
+        @Override
+        public Boolean deserialize(Map<?, ?> map, DeserializationContext<Boolean> deserializationContext) {
+            return null;
+        }
     }
 }

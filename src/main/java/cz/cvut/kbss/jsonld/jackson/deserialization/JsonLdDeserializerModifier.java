@@ -21,13 +21,20 @@ import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
+import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
+
+import java.util.Map;
 
 public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
 
     private final Configuration configuration;
 
-    public JsonLdDeserializerModifier(Configuration configuration, PropertyAccessResolver propertyAccessResolver) {
+    private final Map<Class<?>, ValueDeserializer<?>> commonDeserializers;
+
+    public JsonLdDeserializerModifier(Configuration configuration, PropertyAccessResolver propertyAccessResolver,
+                                      Map<Class<?>, ValueDeserializer<?>> commonDeserializers) {
         this.configuration = configuration;
+        this.commonDeserializers = commonDeserializers;
         BeanAnnotationProcessor.setPropertyAccessResolver(propertyAccessResolver);
     }
 
@@ -35,7 +42,8 @@ public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
     public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
                                                   JsonDeserializer<?> deserializer) {
         if (BeanAnnotationProcessor.isOwlClassEntity(beanDesc.getBeanClass())) {
-            return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass(), configuration);
+            return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass(), configuration,
+                                                 commonDeserializers);
         }
         return deserializer;
     }

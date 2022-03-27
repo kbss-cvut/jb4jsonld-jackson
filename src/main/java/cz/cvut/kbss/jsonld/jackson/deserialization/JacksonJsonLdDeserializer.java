@@ -28,6 +28,7 @@ import com.github.jsonldjava.core.JsonLdProcessor;
 import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.deserialization.JsonLdDeserializer;
+import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
 import cz.cvut.kbss.jsonld.exception.JsonLdDeserializationException;
 
 import java.io.IOException;
@@ -42,15 +43,19 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
 
     private final Class<?> resultType;
 
-    public JacksonJsonLdDeserializer(JsonDeserializer<?> delegatee, Class<?> resultType, Configuration configuration) {
+    private final Map<Class<?>, ValueDeserializer<?>> commonDeserializers;
+
+    public JacksonJsonLdDeserializer(JsonDeserializer<?> delegatee, Class<?> resultType, Configuration configuration,
+                                     Map<Class<?>, ValueDeserializer<?>> commonDeserializers) {
         super(delegatee);
         this.resultType = resultType;
         this.configuration = configuration;
+        this.commonDeserializers = commonDeserializers;
     }
 
     @Override
     protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> newDelegatee) {
-        return new JacksonJsonLdDeserializer(newDelegatee, resultType, configuration);
+        return new JacksonJsonLdDeserializer(newDelegatee, resultType, configuration, commonDeserializers);
     }
 
     @Override
@@ -59,6 +64,7 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
             final Object input = parseJsonObject(jp);
             final List<Object> expanded = JsonLdProcessor.expand(input);
             final JsonLdDeserializer deserializer = JsonLdDeserializer.createExpandedDeserializer(configure(ctx));
+            commonDeserializers.forEach((t, d) -> deserializer.registerDeserializer((Class) t, (ValueDeserializer) d));
             return deserializer.deserialize(expanded, resultType);
         } catch (JsonLdError e) {
             throw new JsonLdDeserializationException("Unable to expand the input JSON.", e);
@@ -94,8 +100,8 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
     }
 
     @Override
-    public Object deserializeWithType(JsonParser jp, DeserializationContext ctxt,
+    public Object deserializeWithType(JsonParser jp, DeserializationContext ctx,
                                       TypeDeserializer typeDeserializer) throws IOException {
-        return deserialize(jp, ctxt);
+        return deserialize(jp, ctx);
     }
 }
