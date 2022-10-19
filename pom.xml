@@ -20,7 +20,7 @@
         <org.junit.jupiter.version>5.8.2</org.junit.jupiter.version>
         <org.mockito.version>4.3.1</org.mockito.version>
         <ch.qos.logback.version>1.2.11</ch.qos.logback.version>
-        <com.fasterxml.jackson.version>2.13.2.2</com.fasterxml.jackson.version>
+        <com.fasterxml.jackson.version>2.13.4.1</com.fasterxml.jackson.version>
         <com.github.jsonld-java.version>0.13.4</com.github.jsonld-java.version>
         <org.eclipse.rdf4j.version>3.7.6</org.eclipse.rdf4j.version>
     </properties>
