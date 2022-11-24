@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
@@ -43,10 +44,20 @@ public class JsonLdSerializerModifier extends BeanSerializerModifier {
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
                                               JsonSerializer<?> serializer) {
-        if (BeanAnnotationProcessor.isOwlClassEntity(beanDesc.getBeanClass()) ||
-                BeanAnnotationProcessor.hasTypesField(beanDesc.getBeanClass())) {
-            return new JacksonJsonLdSerializer<>(configuration, commonSerializers);
+        if (isJsonLdCompatible(beanDesc.getBeanClass())) {
+            return new JacksonJsonLdSerializer<>(configuration, commonSerializers, serializer);
         }
         return serializer;
+    }
+
+    static boolean isJsonLdCompatible(Class<?> cls) {
+        return BeanAnnotationProcessor.isOwlClassEntity(cls) || BeanAnnotationProcessor.hasTypesField(cls);
+    }
+
+    @Override
+    public JsonSerializer<?> modifyCollectionSerializer(SerializationConfig config, CollectionType valueType,
+                                                        BeanDescription beanDesc, JsonSerializer<?> serializer) {
+        // Defer decision on who will handle the collection serialization to JacksonJsonLdSerializer
+        return new JacksonJsonLdSerializer<>(configuration, commonSerializers, serializer);
     }
 }

@@ -14,11 +14,13 @@ package cz.cvut.kbss.jsonld.jackson.serialization;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jsonldjava.utils.JsonUtils;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.Types;
 import cz.cvut.kbss.jopa.vocabulary.RDF;
 import cz.cvut.kbss.jopa.vocabulary.RDFS;
+import cz.cvut.kbss.jsonld.JsonLd;
 import cz.cvut.kbss.jsonld.exception.MissingTypeInfoException;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Generator;
@@ -44,14 +46,14 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonLdSerializationTest {
@@ -261,5 +263,18 @@ public class JsonLdSerializationTest {
         serializeAndStore(user);
         assertFalse(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin()));
         assertTrue(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin().toString()));
+    }
+
+    @Test
+    void serializationReusesContextForCollection() throws Exception {
+        module.configure("form", "context");
+        final List<User> users =
+                IntStream.range(0, 3).mapToObj(i -> Generator.generateUser()).collect(Collectors.toList());
+        final String result = objectMapper.writeValueAsString(users);
+        final Object parsed = JsonUtils.fromString(result);
+        assertInstanceOf(Map.class, parsed);
+        final Map<?, ?> map = (Map<?, ?>) parsed;
+        assertThat(map, hasKey(JsonLd.CONTEXT));
+        assertThat(map, hasKey(JsonLd.GRAPH));
     }
 }

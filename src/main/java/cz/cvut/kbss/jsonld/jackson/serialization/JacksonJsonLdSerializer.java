@@ -21,6 +21,8 @@ import cz.cvut.kbss.jsonld.serialization.JsonLdSerializer;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.Map;
 
 class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
@@ -32,7 +34,10 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
 
     private final Map<Class<?>, ValueSerializer<?>> commonSerializers;
 
-    JacksonJsonLdSerializer(Configuration configuration, Map<Class<?>, ValueSerializer<?>> commonSerializers) {
+    private final JsonSerializer<T> baseSerializer;
+
+    JacksonJsonLdSerializer(Configuration configuration, Map<Class<?>, ValueSerializer<?>> commonSerializers,
+                            JsonSerializer<T> baseSerializer) {
         this.configuration = configuration;
         this.commonSerializers = commonSerializers;
         this.baseSerializer = baseSerializer;
@@ -41,8 +46,24 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
     @Override
     public void serialize(T value, JsonGenerator jsonGenerator,
                           SerializerProvider serializerProvider) throws IOException {
+        if (shouldUseBaseSerializer(value)) {
+            baseSerializer.serialize(value, jsonGenerator, serializerProvider);
+        }
         final JsonLdSerializer serializer = createSerializer(jsonGenerator);
         serializer.serialize(value);
+    }
+
+    private boolean shouldUseBaseSerializer(T value) {
+        if (!(value instanceof Collection)) {
+            return false;
+        }
+        final Collection<?> col = (Collection<?>) value;
+        if (col.isEmpty()) {
+            return false;
+        }
+        // Peek at the first element to see if we should handle it
+        final Object firstElem = col.iterator().next();
+        return firstElem == null || !JsonLdSerializerModifier.isJsonLdCompatible(firstElem.getClass());
     }
 
     private JsonLdSerializer createSerializer(JsonGenerator jsonGenerator) {
