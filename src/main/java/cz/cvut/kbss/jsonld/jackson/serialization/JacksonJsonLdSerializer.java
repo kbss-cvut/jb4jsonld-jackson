@@ -21,14 +21,10 @@ import cz.cvut.kbss.jsonld.serialization.JsonLdSerializer;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Map;
 
 class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
-
-    public static final String FORM_COMPACT = "compact";
-    public static final String FORM_CONTEXT = "context";
 
     private final Configuration configuration;
 
@@ -69,7 +65,8 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
     private JsonLdSerializer createSerializer(JsonGenerator jsonGenerator) {
         final cz.cvut.kbss.jsonld.serialization.JsonGenerator writer = new JacksonJsonWriter(jsonGenerator);
         final JsonLdSerializer serializer;
-        if (FORM_CONTEXT.equals(configuration.get("form", FORM_COMPACT))) {
+        if (SerializationConstants.FORM_COMPACT_WITH_CONTEXT.equals(
+                configuration.get(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT))) {
             serializer =
                     JsonLdSerializer.createContextBuildingJsonLdSerializer(writer, new Configuration(configuration));
         } else {

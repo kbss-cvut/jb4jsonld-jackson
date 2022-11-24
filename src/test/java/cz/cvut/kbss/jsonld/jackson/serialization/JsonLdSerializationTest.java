@@ -267,7 +267,7 @@ public class JsonLdSerializationTest {
 
     @Test
     void serializationReusesContextForCollection() throws Exception {
-        module.configure("form", "context");
+        module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT_WITH_CONTEXT);
         final List<User> users =
                 IntStream.range(0, 3).mapToObj(i -> Generator.generateUser()).collect(Collectors.toList());
         final String result = objectMapper.writeValueAsString(users);
