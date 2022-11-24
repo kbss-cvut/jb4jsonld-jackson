@@ -5,8 +5,7 @@
 Java Binding for JSON-LD - Jackson (JB4JSON-LD-Jackson) is a binding of JB4JSON-LD for [Jackson](https://github.com/FasterXML/jackson).
 
 The core implementation of JB4JSON-LD with a mapping example can be found at [https://github.com/kbss-cvut/jb4jsonld](https://github.com/kbss-cvut/jb4jsonld).
-
-More info can be found at [https://kbss.felk.cvut.cz/web/kbss/jb4json-ld](https://kbss.felk.cvut.cz/web/kbss/jb4json-ld).
+The repository also contains [Wiki](https://github.com/kbss-cvut/jb4jsonld/wiki) with some basic documentation.
 
 ## Usage
 
