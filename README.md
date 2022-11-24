@@ -30,7 +30,18 @@ an executable example of JB4JSON-LD-Jackson in action.
 The serializer's output has been verified to be a valid JSON-LD and is parseable by Java's JSON-LD reference implementation 
 [jsonld-java](https://github.com/jsonld-java/jsonld-java).
 
-The output is basically a context-less compacted JSON-LD, which uses full IRIs for attribute names.
+The output is by default a context-less compacted JSON-LD, which uses full IRIs for attribute names.
+
+### Serialization with Context
+
+Since version **0.10.0**, it is possible to configure JB4JSON-LD to output compacted JSON-LD with context (`@context`).
+This allows better compatibility with legacy applications not supporting JSON-LD. To enable context-based serialization,
+configure the `JsonLdModule` as follows:
+
+```java
+JsonLdModule module = new JsonLdModule();
+module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT_WITH_CONTEXT);
+```
 
 ## Deserialization
 
