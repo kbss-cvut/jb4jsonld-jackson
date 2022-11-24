@@ -22,7 +22,7 @@ import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
 import cz.cvut.kbss.jsonld.jackson.common.JsonPropertyAccessResolver;
 import cz.cvut.kbss.jsonld.jackson.deserialization.JsonLdDeserializerModifier;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializerModifier;
-import cz.cvut.kbss.jsonld.serialization.ValueSerializer;
+import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +56,19 @@ public class JsonLdModule extends SimpleModule {
      * @return This instance
      */
     public JsonLdModule configure(ConfigParam param, String value) {
+        Objects.requireNonNull(param);
+        configuration.set(param, value);
+        return this;
+    }
+
+    /**
+     * Configure this module with additional parameters.
+     *
+     * @param param Parameter to set
+     * @param value New value of the parameter
+     * @return This instance
+     */
+    public JsonLdModule configure(String param, String value) {
         Objects.requireNonNull(param);
         configuration.set(param, value);
         return this;

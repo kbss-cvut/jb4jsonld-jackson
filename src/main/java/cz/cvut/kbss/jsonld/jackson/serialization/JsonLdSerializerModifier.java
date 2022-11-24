@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
-import cz.cvut.kbss.jsonld.serialization.ValueSerializer;
+import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
 
 import java.util.Map;
 
