@@ -1,0 +1,56 @@
+{
+  "@context" : {
+    "firstName" : "http://xmlns.com/foaf/0.1/firstName",
+    "lastName" : "http://xmlns.com/foaf/0.1/lastName",
+    "types" : "@type",
+    "emailAddress" : "http://xmlns.com/foaf/0.1/mbox",
+    "dateCreated" : {
+      "@id" : "http://purl.org/dc/terms/created",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "created" : {
+      "@id" : "http://purl.org/dc/terms/created",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "members" : "http://krizik.felk.cvut.cz/ontologies/study-manager/has-member",
+    "name" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "clinic" : "http://krizik.felk.cvut.cz/ontologies/study-manager/is-member-of",
+    "uri" : "@id"
+  },
+  "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/organization/instance7584",
+  "@type" : [ "http://krizik.felk.cvut.cz/ontologies/study-manager/organization" ],
+  "name" : "Organization7584",
+  "members" : [ {
+    "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/user/instance6188",
+    "types" : [ "http://krizik.felk.cvut.cz/ontologies/study-manager/user" ],
+    "clinic" : {
+      "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/organization/instance7584"
+    },
+    "created" : "2023-01-31T12:23:41Z",
+    "firstName" : "FirstName6188",
+    "lastName" : "LastName6188",
+    "emailAddress" : "FirstName6188LastName6188@example.org"
+  }, {
+    "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/user/instance1885",
+    "types" : [ "http://krizik.felk.cvut.cz/ontologies/study-manager/user" ],
+    "clinic" : {
+      "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/organization/instance7584"
+    },
+    "created" : "2023-01-31T12:23:41Z",
+    "firstName" : "FirstName1885",
+    "lastName" : "LastName1885",
+    "emailAddress" : "FirstName1885LastName1885@example.org"
+  }, {
+    "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/user/instance4319",
+    "types" : [ "http://krizik.felk.cvut.cz/ontologies/study-manager/user" ],
+    "clinic" : {
+      "uri" : "http://krizik.felk.cvut.cz/ontologies/study-manager/organization/instance7584"
+    },
+    "created" : "2023-01-31T12:23:41Z",
+    "firstName" : "FirstName4319",
+    "lastName" : "LastName4319",
+    "emailAddress" : "FirstName4319LastName4319@example.org"
+  } ],
+  "emailAddress" : "Organization7584@example.org",
+  "dateCreated" : "2023-01-31T12:23:41Z"
+}

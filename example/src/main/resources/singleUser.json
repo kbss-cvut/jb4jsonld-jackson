@@ -1,0 +1,13 @@
+{
+  "@id": "http://krizik.felk.cvut.cz/ontologies/study-manager/user/instance6188",
+  "@type": [
+    "http://krizik.felk.cvut.cz/ontologies/study-manager/user"
+  ],
+  "http://purl.org/dc/terms/created": {
+    "@value": "2023-01-31T12:23:41Z",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "http://xmlns.com/foaf/0.1/firstName": "FirstName6188",
+  "http://xmlns.com/foaf/0.1/lastName": "LastName6188",
+  "http://xmlns.com/foaf/0.1/mbox": "FirstName6188LastName6188@example.org"
+}
