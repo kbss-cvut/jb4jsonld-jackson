@@ -17,12 +17,13 @@ Use `@OWLDataProperty` to annotate data fields and `@OWLObjectProperty` to annot
 
 To integrate the library with Jackson, register a `cz.cvut.kbss.jsonld.jackson.JsonLdModule` in Jackson's `ObjectMapper` like this:
 
-`objectMapper.registerModule(new JsonLdModule())`
+`objectMapper.registerModule(new JsonLdModule());`
 
-and you should be good to go. See the `JsonLdSerializionTest` for examples.
+and you should be good to go. See the example application in [example](/example) for a minimalist demo of using JB4JSON-LD Jackson.
 
-See [https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld](https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld) for
-an executable example of JB4JSON-LD-Jackson in action.
+[https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld](https://github.com/kbss-cvut/jopa-examples/tree/master/jsonld) provides
+a more realistic example of JB4JSON-LD-Jackson in action. [TermIt](https://github.com/kbss-cvut/termit) is then a real-world 
+information system using JB4JSON-LD.
 
 ## Serialization
 
