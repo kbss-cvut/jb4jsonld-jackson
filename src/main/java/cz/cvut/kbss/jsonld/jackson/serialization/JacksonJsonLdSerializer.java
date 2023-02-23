@@ -44,9 +44,10 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
                           SerializerProvider serializerProvider) throws IOException {
         if (shouldUseBaseSerializer(value)) {
             baseSerializer.serialize(value, jsonGenerator, serializerProvider);
+        } else {
+            final JsonLdSerializer serializer = createSerializer(jsonGenerator);
+            serializer.serialize(value);
         }
-        final JsonLdSerializer serializer = createSerializer(jsonGenerator);
-        serializer.serialize(value);
     }
 
     private boolean shouldUseBaseSerializer(T value) {

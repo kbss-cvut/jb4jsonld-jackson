@@ -277,4 +277,13 @@ public class JsonLdSerializationTest {
         assertThat(map, hasKey(JsonLd.CONTEXT));
         assertThat(map, hasKey(JsonLd.GRAPH));
     }
+
+    @Test
+    void serializationOfCollectionOfNonEntitiesFallsBackToBaseJacksonSerializer() throws Exception {
+        final List<URI> values = Arrays.asList(Generator.generateUri(), Generator.generateUri());
+        final String result = objectMapper.writeValueAsString(values);
+        final ObjectMapper baseObjectMapper = new ObjectMapper();
+        final String baseJson = baseObjectMapper.writeValueAsString(values);
+        assertEquals(baseJson, result);
+    }
 }
