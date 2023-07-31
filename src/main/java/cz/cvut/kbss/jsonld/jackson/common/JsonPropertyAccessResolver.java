@@ -31,6 +31,7 @@ import static cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor.isTypesField;
 
 public class JsonPropertyAccessResolver extends JsonLdPropertyAccessResolver {
 
+    // Remember fields ignored via JsonIgnoreProperties
     private final Map<Class<?>, Set<Field>> ignoredFields = new ConcurrentHashMap<>();
 
     @Override
