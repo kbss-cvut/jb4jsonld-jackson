@@ -46,7 +46,7 @@ class JsonPropertyAccessResolverTest {
             "withIgnore,                  false",
             "ignoredByJsonIgnoreProperties, false"})
     void isReadable(String fieldName, boolean result) throws Exception {
-        assertEquals(result, sut.isReadable(TestClass.class.getDeclaredField(fieldName)));
+        assertEquals(result, sut.isReadable(TestClass.class.getDeclaredField(fieldName), TestClass.class));
     }
 
     @ParameterizedTest

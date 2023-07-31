@@ -28,6 +28,7 @@ import cz.cvut.kbss.jsonld.jackson.environment.StatementCopyingHandler;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
+import cz.cvut.kbss.jsonld.jackson.environment.model.RestrictedOrganization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.serialization.JsonNodeFactory;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
@@ -298,5 +299,14 @@ public class JsonLdSerializationTest {
         instance.setSubordinates(Generator.randomCount(100));
         serializeAndStore(instance);
         assertFalse(contains(instance.getUri(), Vocabulary.EMPLOYEE_COUNT, instance.getSubordinates()));
+    }
+
+    @Test
+    void serializationSkipsInheritedAttributesListedInJsonIgnoreProperties() throws Exception {
+        final RestrictedOrganization instance = new RestrictedOrganization(Generator.generateOrganization());
+        instance.setEmployees(Collections.singleton(Generator.generateEmployee()));
+        serializeAndStore(instance);
+        instance.getBrands().forEach(brand -> assertFalse(contains(instance.getUri(), Vocabulary.BRAND, brand)));
+        instance.getEmployees().forEach(e -> assertFalse(contains(instance.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
     }
 }
