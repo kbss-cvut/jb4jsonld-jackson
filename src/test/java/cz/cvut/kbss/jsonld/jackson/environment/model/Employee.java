@@ -14,15 +14,21 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 
+@JsonIgnoreProperties("subordinates")
 @OWLClass(iri = Vocabulary.EMPLOYEE)
 public class Employee extends User {
 
     @OWLObjectProperty(iri = Vocabulary.IS_MEMBER_OF)
     private Organization employer;
+
+    @OWLDataProperty(iri = Vocabulary.EMPLOYEE_COUNT)
+    private Integer subordinates;
 
     public Organization getEmployer() {
         return employer;
@@ -30,5 +36,13 @@ public class Employee extends User {
 
     public void setEmployer(Organization employer) {
         this.employer = employer;
+    }
+
+    public Integer getSubordinates() {
+        return subordinates;
+    }
+
+    public void setSubordinates(Integer subordinates) {
+        this.subordinates = subordinates;
     }
 }
