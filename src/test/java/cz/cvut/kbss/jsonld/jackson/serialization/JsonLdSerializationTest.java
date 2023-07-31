@@ -31,11 +31,14 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.serialization.JsonNodeFactory;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
+import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XSD;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.rio.*;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
@@ -112,7 +115,7 @@ public class JsonLdSerializationTest {
         if (value instanceof URI) {
             rdfVal = vf.createIRI(value.toString());
         } else if (value instanceof Integer) {
-            rdfVal = vf.createLiteral((Integer) value);
+            rdfVal = vf.createLiteral(value.toString(), XSD.INTEGER);
         } else if (value instanceof Long) {
             rdfVal = vf.createLiteral((Long) value);
         } else if (value instanceof Double) {
@@ -124,8 +127,10 @@ public class JsonLdSerializationTest {
         } else if (value instanceof String) {
             rdfVal = vf.createLiteral(value.toString());
         }
-        return connection.getStatements(vf.createIRI(subject.toString()), vf.createIRI(property), rdfVal, false)
-                         .hasNext();
+        final RepositoryResult<Statement> res = connection.getStatements(vf.createIRI(subject.toString()), vf.createIRI(property), rdfVal, false);
+        final boolean contains = res.hasNext();
+        res.close();
+        return contains;
     }
 
     private void verifyUserAttributes(User user) {
@@ -285,5 +290,13 @@ public class JsonLdSerializationTest {
         final ObjectMapper baseObjectMapper = new ObjectMapper();
         final String baseJson = baseObjectMapper.writeValueAsString(values);
         assertEquals(baseJson, result);
+    }
+
+    @Test
+    void serializationSkipsAttributesListedInJsonIgnoreProperties() throws Exception {
+        final Employee instance = Generator.generateEmployee();
+        instance.setSubordinates(Generator.randomCount(100));
+        serializeAndStore(instance);
+        assertFalse(contains(instance.getUri(), Vocabulary.EMPLOYEE_COUNT, instance.getSubordinates()));
     }
 }

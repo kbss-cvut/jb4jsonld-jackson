@@ -15,6 +15,7 @@
 package cz.cvut.kbss.jsonld.jackson.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonPropertyAccessResolverTest {
 
-    private JsonPropertyAccessResolver sut = new JsonPropertyAccessResolver();
+    private final JsonPropertyAccessResolver sut = new JsonPropertyAccessResolver();
 
     @ParameterizedTest
     @CsvSource({
@@ -42,7 +43,8 @@ class JsonPropertyAccessResolverTest {
             "withWriteOnlyAccessOverride, false",
             "types,                       true",
             "id,                          true",
-            "withIgnore,                  false"})
+            "withIgnore,                  false",
+            "ignoredByJsonIgnoreProperties, false"})
     void isReadable(String fieldName, boolean result) throws Exception {
         assertEquals(result, sut.isReadable(TestClass.class.getDeclaredField(fieldName)));
     }
@@ -55,12 +57,14 @@ class JsonPropertyAccessResolverTest {
             "withReadOnlyAccessOverride,  false",
             "withWriteOnlyAccess,         true",
             "withWriteOnlyAccessOverride, true",
-            "withIgnore,                  false"})
+            "withIgnore,                  false",
+            "ignoredByJsonIgnoreProperties,false"})
     void isWriteable(String fieldName, boolean result) throws Exception {
         assertEquals(result, sut.isWriteable(TestClass.class.getDeclaredField(fieldName)));
     }
 
     @SuppressWarnings("unused")
+    @JsonIgnoreProperties({"ignoredByJsonIgnoreProperties"})
     private static class TestClass {
 
         // This is ignored for serialization
@@ -98,6 +102,9 @@ class JsonPropertyAccessResolverTest {
         @JsonIgnore
         @OWLDataProperty(iri = "http://withIgnore")
         private String withIgnore;
+
+        @OWLDataProperty(iri = "http://ignoredByJsonIgnoreProperties")
+        private String ignoredByJsonIgnoreProperties;
 
         // This is ignored for serialization
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
