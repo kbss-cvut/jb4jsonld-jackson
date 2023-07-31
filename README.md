@@ -61,3 +61,7 @@ There are two ways to get JB4JSON-LD-Jackson:
     <artifactId>jb4jsonld-jackson</artifactId>
 </dependency>
 ```
+
+## License
+
+LGPLv3
