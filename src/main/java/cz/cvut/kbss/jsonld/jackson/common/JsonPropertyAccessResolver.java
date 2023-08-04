@@ -31,7 +31,7 @@ import static cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor.isTypesField;
 public class JsonPropertyAccessResolver extends JsonLdPropertyAccessResolver {
 
     // Remember fields ignored via JsonIgnoreProperties
-    private final Set<Field> ignoredFields = new HashSet<>();
+    private final Map<Field, Class<?>> ignoredFields = new HashMap<>();
     private final Set<Class<?>> processedClasses = new HashSet<>();
 
     @Override
@@ -52,13 +52,12 @@ public class JsonPropertyAccessResolver extends JsonLdPropertyAccessResolver {
                     final Map<String, Field> fieldMap = new HashMap<>();
                     classes.stream().map(Class::getDeclaredFields).flatMap(Stream::of)
                            .forEach(f -> fieldMap.put(f.getName(), f));
-                    ignoredFields.addAll(Stream.of(ann.value()).filter(fieldMap::containsKey).map(fieldMap::get)
-                                               .collect(Collectors.toSet()));
+                    Stream.of(ann.value()).filter(fieldMap::containsKey).map(fieldMap::get).forEach(f -> ignoredFields.put(f, objectCls));
                 }
                 processedClasses.add(objectCls);
             }
         }
-        return ignoredFields.contains(field);
+        return ignoredFields.containsKey(field) && ignoredFields.get(field).equals(objectCls);
     }
 
     @Override

@@ -309,4 +309,18 @@ public class JsonLdSerializationTest {
         instance.getBrands().forEach(brand -> assertFalse(contains(instance.getUri(), Vocabulary.BRAND, brand)));
         instance.getEmployees().forEach(e -> assertFalse(contains(instance.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
     }
+
+    @Test
+    void serializationDoesNotSkipJsonIgnoredPropertiesDeclaredInSubClassWhenParentClassIsSerialized() throws Exception {
+        final Organization organization = Generator.generateOrganization();
+        organization.setEmployees(Collections.singleton(Generator.generateEmployee()));
+        final RestrictedOrganization restricted = new RestrictedOrganization(organization);
+        serializeAndStore(restricted);
+        restricted.getBrands().forEach(brand -> assertFalse(contains(restricted.getUri(), Vocabulary.BRAND, brand)));
+        restricted.getEmployees().forEach(e -> assertFalse(contains(restricted.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
+        connection.clear();
+        serializeAndStore(organization);
+        restricted.getBrands().forEach(brand -> assertTrue(contains(restricted.getUri(), Vocabulary.BRAND, brand)));
+        restricted.getEmployees().forEach(e -> assertTrue(contains(restricted.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
+    }
 }
