@@ -25,6 +25,7 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
+import jakarta.json.JsonValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -163,12 +167,12 @@ class JsonLdDeserializationTest {
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
         assertNull(result.getAdmin());
-        verify(deserializer).deserialize(anyMap(), any(DeserializationContext.class));
+        verify(deserializer).deserialize(any(JsonValue.class), any(DeserializationContext.class));
     }
 
     static class CustomDeserializer implements ValueDeserializer<Boolean> {
         @Override
-        public Boolean deserialize(Map<?, ?> map, DeserializationContext<Boolean> deserializationContext) {
+        public Boolean deserialize(JsonValue map, DeserializationContext<Boolean> deserializationContext) {
             return null;
         }
     }
