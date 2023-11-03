@@ -1,14 +1,19 @@
-/**
- * Copyright (C) 2022 Czech Technical University in Prague
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
- * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
- * version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details. You should have received a copy of the GNU General Public License along with this program. If not, see
- * <http://www.gnu.org/licenses/>.
+/*
+ * JB4JSON-LD Jackson
+ * Copyright (C) 2023 Czech Technical University in Prague
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.
  */
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
@@ -25,6 +30,7 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
+import jakarta.json.JsonValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +39,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -163,12 +172,12 @@ class JsonLdDeserializationTest {
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
         assertNull(result.getAdmin());
-        verify(deserializer).deserialize(anyMap(), any(DeserializationContext.class));
+        verify(deserializer).deserialize(any(JsonValue.class), any(DeserializationContext.class));
     }
 
     static class CustomDeserializer implements ValueDeserializer<Boolean> {
         @Override
-        public Boolean deserialize(Map<?, ?> map, DeserializationContext<Boolean> deserializationContext) {
+        public Boolean deserialize(JsonValue map, DeserializationContext<Boolean> deserializationContext) {
             return null;
         }
     }
