@@ -16,7 +16,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.14.2</cz.cvut.kbss.jb4jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.14.3</cz.cvut.kbss.jb4jsonld.version>
     </properties>
 
     <dependencies>
