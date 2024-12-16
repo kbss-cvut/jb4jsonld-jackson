@@ -6,7 +6,7 @@
 
     <groupId>cz.cvut.kbss.jsonld</groupId>
     <artifactId>jb4jsonld-jackson</artifactId>
-    <version>0.15.0</version>
+    <version>0.15.1</version>
     <name>JB4JSON-LD-Jackson</name>
     <description>JB4JSON-LD integration for Jackson.</description>
     <url>https://github.com/kbss-cvut/jb4jsonld-jackson</url>
