@@ -20,6 +20,11 @@ package cz.cvut.kbss.jsonld.jackson.deserialization;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cvut.kbss.jopa.model.annotations.Id;
+import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
+import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.deserialization.DeserializationContext;
 import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
@@ -41,6 +46,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -153,7 +159,7 @@ class JsonLdDeserializationTest {
         jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.environment.model");
         final String input = Environment.readData("objectWithSingularReference.json");
         final Person result = objectMapper.readValue(input, Person.class);
-        assertTrue(result instanceof Employee);
+        assertInstanceOf(Employee.class, result);
     }
 
     @Test
@@ -180,5 +186,59 @@ class JsonLdDeserializationTest {
         public Boolean deserialize(JsonValue map, DeserializationContext<Boolean> deserializationContext) {
             return null;
         }
+    }
+
+    @Test
+    void deserializationSupportsAssumedTargetType() throws Exception {
+        jsonLdModule.configure(ConfigParam.ASSUME_TARGET_TYPE, "true");
+        jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.deserialization");
+        final String input = """
+                {
+                  "@context": "https://www.w3.org/ns/activitystreams",
+                  "summary": "Martin created an image",
+                  "type": "Create",
+                  "actor": "http://www.test.example/martin",
+                  "object": "http://example.org/foo.jpg"
+                }
+                """;
+        final Create result = objectMapper.readValue(input, Create.class);
+        assertNotNull(result);
+        assertEquals("http://www.test.example/martin", result.actor.id);
+        assertEquals("http://example.org/foo.jpg", result.object.id);
+        assertEquals("Martin created an image", result.summary);
+    }
+
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Create")
+    public static class Create {
+
+        @Id
+        private String id;
+
+        @OWLAnnotationProperty(iri = "https://www.w3.org/ns/activitystreams#object")
+        ActivityPubObject object;
+
+        @OWLObjectProperty(iri = "https://www.w3.org/ns/activitystreams#actor")
+        ObjectOrLink actor;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#@context")
+        String context;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#type")
+        String type;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#summary")
+        String summary;
+    }
+
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Object")
+    public static class ActivityPubObject {
+        @Id
+        private String id;
+    }
+
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Link")
+    public static class ObjectOrLink {
+        @Id
+        private String id;
     }
 }
