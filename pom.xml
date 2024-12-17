@@ -6,7 +6,7 @@
 
     <groupId>cz.cvut.kbss.jsonld</groupId>
     <artifactId>jb4jsonld-jackson</artifactId>
-    <version>0.15.1</version>
+    <version>0.15.2</version>
     <name>JB4JSON-LD-Jackson</name>
     <description>JB4JSON-LD integration for Jackson.</description>
     <url>https://github.com/kbss-cvut/jb4jsonld-jackson</url>
@@ -17,13 +17,13 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.15.0</cz.cvut.kbss.jb4jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.15.1</cz.cvut.kbss.jb4jsonld.version>
         <com.fasterxml.jackson.version>2.17.2</com.fasterxml.jackson.version>
 
         <org.junit.jupiter.version>5.11.0</org.junit.jupiter.version>
         <org.mockito.version>5.12.0</org.mockito.version>
         <ch.qos.logback.version>1.5.7</ch.qos.logback.version>
-        <org.eclipse.rdf4j.version>5.0.2</org.eclipse.rdf4j.version>
+        <org.eclipse.rdf4j.version>5.0.3</org.eclipse.rdf4j.version>
     </properties>
 
     <dependencies>
@@ -131,7 +131,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.4.1</version>
+                        <version>3.10.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -175,19 +175,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.1</version>
             </plugin>
 
             <!-- Code coverage plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.12</version>
                 <executions>
                     <execution>
                         <goals>
