@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2024 Czech Technical University in Prague
+ * Copyright (C) 2025 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,19 +26,19 @@ public class SerializationConstants {
 
     /**
      * Compact form of the JSON-LD document.
-     *
+     * <p>
      * This form is without context and uses full IRIs of mapped properties as terms in the resulting JSON-LD object.
-     *
+     * <p>
      * Used as a value of the {@link #FORM} configuration parameter.
      */
     public static final String FORM_COMPACT = "compact";
 
     /**
      * Compact form with context.
-     *
-     * This form creates a context where field names are used as terms in the resulting JSON-LD object and are mapped
-     * to IRIs (or more complex term definitions) in the context.
-     *
+     * <p>
+     * This form creates a context where field names are used as terms in the resulting JSON-LD object and are mapped to
+     * IRIs (or more complex term definitions) in the context.
+     * <p>
      * Used as a value of the {@link #FORM} configuration parameter.
      */
     public static final String FORM_COMPACT_WITH_CONTEXT = "compact-with-context";
