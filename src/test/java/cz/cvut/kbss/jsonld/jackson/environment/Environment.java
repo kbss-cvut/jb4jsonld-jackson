@@ -17,10 +17,14 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment;
 
+import cz.cvut.kbss.jsonld.jackson.environment.model.User;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Environment {
 
@@ -43,5 +47,13 @@ public class Environment {
         } catch (IOException e) {
             throw new RuntimeException("Unable to read test file " + fileName, e);
         }
+    }
+
+    public static void verifyUserAttributes(User expected, User actual) {
+        assertEquals(expected.getUri(), actual.getUri());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAdmin(), actual.getAdmin());
     }
 }

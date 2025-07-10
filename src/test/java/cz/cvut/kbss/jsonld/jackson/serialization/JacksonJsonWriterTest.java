@@ -20,8 +20,9 @@ package cz.cvut.kbss.jsonld.jackson.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class JacksonJsonWriterTest {
 
     @Mock
@@ -39,7 +41,6 @@ class JacksonJsonWriterTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
         this.writer = new JacksonJsonWriter(generator);
     }
 

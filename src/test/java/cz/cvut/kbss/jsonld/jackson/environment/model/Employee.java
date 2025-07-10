@@ -33,6 +33,9 @@ public class Employee extends User {
     @OWLDataProperty(iri = Vocabulary.EMPLOYEE_COUNT)
     private Integer subordinates;
 
+    @OWLDataProperty(iri = Vocabulary.SALARY)
+    private Double salary;
+
     public Organization getEmployer() {
         return employer;
     }
@@ -47,5 +50,13 @@ public class Employee extends User {
 
     public void setSubordinates(Integer subordinates) {
         this.subordinates = subordinates;
+    }
+
+    public Double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
     }
 }

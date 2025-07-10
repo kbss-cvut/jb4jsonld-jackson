@@ -34,6 +34,7 @@ public class Vocabulary {
     public static final String IS_ADMIN = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin";
     public static final String PASSWORD = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/password";
     public static final String EMPLOYEE_COUNT = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/employeeCount";
+    public static final String SALARY = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/salary";
 
     private Vocabulary() {
         throw new AssertionError();
