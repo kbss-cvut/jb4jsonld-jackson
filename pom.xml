@@ -17,7 +17,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.15.2</cz.cvut.kbss.jb4jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.15.3</cz.cvut.kbss.jb4jsonld.version>
         <com.fasterxml.jackson.version>2.18.3</com.fasterxml.jackson.version>
 
         <org.junit.jupiter.version>5.11.0</org.junit.jupiter.version>
