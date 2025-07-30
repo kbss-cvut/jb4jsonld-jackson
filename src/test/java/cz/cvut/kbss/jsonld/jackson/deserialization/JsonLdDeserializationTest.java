@@ -93,22 +93,14 @@ class JsonLdDeserializationTest {
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
         final User expected = USERS.get(HALSEY_URI);
-        verifyUserAttributes(expected, result);
-    }
-
-    private void verifyUserAttributes(User expected, User actual) {
-        assertEquals(expected.getUri(), actual.getUri());
-        assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getLastName(), actual.getLastName());
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getAdmin(), actual.getAdmin());
+        Environment.verifyUserAttributes(expected, result);
     }
 
     @Test
     void testDeserializeInstanceWithSingularObjectProperty() throws Exception {
         final String input = Environment.readData("objectWithSingularReference.json");
         final Employee result = objectMapper.readValue(input, Employee.class);
-        verifyUserAttributes(USERS.get(HALSEY_URI), result);
+        Environment.verifyUserAttributes(USERS.get(HALSEY_URI), result);
         assertNotNull(result.getEmployer());
         verifyOrganizationAttributes(result.getEmployer());
     }
@@ -131,7 +123,7 @@ class JsonLdDeserializationTest {
         assertFalse(result.isEmpty());
         result.forEach(e -> {
             final User expected = USERS.get(e.getUri());
-            verifyUserAttributes(expected, e);
+            Environment.verifyUserAttributes(expected, e);
         });
     }
 
@@ -141,7 +133,7 @@ class JsonLdDeserializationTest {
         final String input = Environment.readData("objectWithUnknownProperty.json");
         final User result = objectMapper.readValue(input, User.class);
         assertNotNull(result);
-        verifyUserAttributes(USERS.get(HALSEY_URI), result);
+        Environment.verifyUserAttributes(USERS.get(HALSEY_URI), result);
     }
 
     /**

@@ -86,6 +86,7 @@ public class Generator {
     public static Employee generateEmployee() {
         final Employee employee = new Employee();
         setUserAttributes(employee);
+        employee.setSalary(RAND.nextDouble(1000.00, 10000.00));
         final Organization company = generateOrganization();
         employee.setEmployer(company);
         return employee;

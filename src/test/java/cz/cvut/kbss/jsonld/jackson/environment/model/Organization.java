@@ -31,8 +31,6 @@ import java.util.Set;
 @OWLClass(iri = Vocabulary.ORGANIZATION)
 public class Organization {
 
-    private static final String DEFAULT_COUNTRY = "Czech Republic";
-
     @Id
     private URI uri;
 
