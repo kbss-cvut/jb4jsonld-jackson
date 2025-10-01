@@ -23,6 +23,9 @@ public class Vocabulary {
     public static final String USER = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User";
     public static final String EMPLOYEE = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee";
     public static final String ORGANIZATION = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Organization";
+	public static final String COMPANY = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Company";
+	public static final String COMPANY_USERS = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/companyUsers";
+	public static final String COMPANY_USER = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/CompanyUser";
 
     public static final String FIRST_NAME = "http://xmlns.com/foaf/0.1/firstName";
     public static final String LAST_NAME = "http://xmlns.com/foaf/0.1/lastName";

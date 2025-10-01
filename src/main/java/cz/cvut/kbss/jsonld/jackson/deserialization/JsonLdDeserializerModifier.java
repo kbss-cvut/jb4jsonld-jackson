@@ -44,9 +44,9 @@ public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
     @Override
     public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
                                                   JsonDeserializer<?> deserializer) {
-        if (BeanAnnotationProcessor.isOwlClassEntity(beanDesc.getBeanClass())) {
-            return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass(), configuration,
-                                                 commonDeserializers);
+		Class<?> beanClass = beanDesc.getBeanClass();
+        if (BeanAnnotationProcessor.isOwlClassEntity(beanClass) || BeanAnnotationProcessor.isOwlAbstractClassEntity(beanClass)) {
+            return new JacksonJsonLdDeserializer(deserializer, beanClass, configuration, commonDeserializers);
         }
         return deserializer;
     }
