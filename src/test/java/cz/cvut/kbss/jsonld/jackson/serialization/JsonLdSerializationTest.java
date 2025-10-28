@@ -15,317 +15,331 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package cz.cvut.kbss.jsonld.jackson.serialization;
+package cz.cvut.kbss.jsonld.jackson.deserialization;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jsonldjava.utils.JsonUtils;
+import com.fasterxml.jackson.databind.cfg.DeserializerFactoryConfig;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
 import cz.cvut.kbss.jopa.model.annotations.Id;
+import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
+import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
-import cz.cvut.kbss.jopa.model.annotations.Types;
-import cz.cvut.kbss.jopa.vocabulary.RDF;
-import cz.cvut.kbss.jopa.vocabulary.RDFS;
-import cz.cvut.kbss.jsonld.JsonLd;
-import cz.cvut.kbss.jsonld.exception.MissingTypeInfoException;
+import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
+import cz.cvut.kbss.jsonld.ConfigParam;
+import cz.cvut.kbss.jsonld.deserialization.DeserializationContext;
+import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
+import cz.cvut.kbss.jsonld.exception.UnresolvedReferenceException;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
-import cz.cvut.kbss.jsonld.jackson.environment.Generator;
-import cz.cvut.kbss.jsonld.jackson.environment.StatementCopyingHandler;
-import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
+import cz.cvut.kbss.jsonld.jackson.environment.Environment;
+import cz.cvut.kbss.jsonld.jackson.environment.model.AbstractCompany;
+import cz.cvut.kbss.jsonld.jackson.environment.model.Company;
+import cz.cvut.kbss.jsonld.jackson.environment.model.CompanyUser;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
-import cz.cvut.kbss.jsonld.jackson.environment.model.RestrictedOrganization;
+import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
-import cz.cvut.kbss.jsonld.serialization.JsonNodeFactory;
-import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
-import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.vocabulary.XSD;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
-import org.eclipse.rdf4j.repository.RepositoryResult;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.rio.*;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
-import org.junit.jupiter.api.AfterEach;
+import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializationTest;
+import jakarta.json.JsonValue;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
-public class JsonLdSerializationTest {
+class JsonLdDeserializationTest {
 
-    private Repository repository;
-    private RepositoryConnection connection;
+    private static final URI HALSEY_URI = URI
+            .create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Catherine+Halsey");
+    private static final URI LASKY_URI = URI
+            .create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Thomas+Lasky");
+    private static final URI PALMER_URI = URI
+            .create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Sarah+Palmer");
 
-    private RDFParser parser;
+    private static final Map<URI, User> USERS = initUsers();
+	private static final Map<URI, CompanyUser> COMPANY_USERS = initCompanyUsers();
 
-    private JsonLdModule module;
+    private static final URI ORG_URI = URI.create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#UNSC");
+    private static final String ORG_NAME = "UNSC";
+    private static final String[] ORG_BRANDS = {"Spartan-II", "Mjolnir IV"};
+
     private ObjectMapper objectMapper;
+    private JsonLdModule jsonLdModule;
+
+    private static Map<URI, User> initUsers() {
+        final Map<URI, User> map = new HashMap<>();
+        map.put(HALSEY_URI, new User(HALSEY_URI, "Catherine", "Halsey", "halsey@unsc.org", true));
+        map.put(LASKY_URI, new User(LASKY_URI, "Thomas", "Lasky", "lasky@unsc.org", false));
+        map.put(PALMER_URI, new User(PALMER_URI, "Sarah", "Palmer", "palmer@unsc.org", false));
+        return map;
+    }
+
+	private static Map<URI, CompanyUser> initCompanyUsers() {
+		final Map<URI, CompanyUser> map = new HashMap<>();
+        map.put(HALSEY_URI, new CompanyUser(HALSEY_URI, "Catherine", "Halsey"));
+        map.put(LASKY_URI, new CompanyUser(LASKY_URI, "Thomas", "Lasky"));
+        map.put(PALMER_URI, new CompanyUser(PALMER_URI, "Sarah", "Palmer"));
+		return map;
+	}
 
     @BeforeEach
     void setUp() {
-        initRepository();
-        this.parser = Rio.createParser(RDFFormat.JSONLD);
-        parser.setRDFHandler(new StatementCopyingHandler(connection));
-
-        this.module = new JsonLdModule();
         this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
-    }
-
-    private void initRepository() {
-        this.repository = new SailRepository(new MemoryStore());
-        repository.init();
-        this.connection = repository.getConnection();
-    }
-
-    @AfterEach
-    void tearDown() {
-        connection.close();
-        repository.shutDown();
+        this.jsonLdModule = new JsonLdModule();
+        objectMapper.registerModule(jsonLdModule);
     }
 
     @Test
-    void testSerializeInstanceWithDataProperties() throws Exception {
-        final User user = Generator.generateUser();
-        serializeAndStore(user);
-        verifyUserAttributes(user);
-    }
-
-    private void serializeAndStore(Object instance)
-            throws RepositoryException, IOException, RDFParseException, RDFHandlerException {
-        final String result = objectMapper.writeValueAsString(instance);
-        connection.begin();
-        try (final ByteArrayInputStream bin = new ByteArrayInputStream(result.getBytes())) {
-            parser.parse(bin, null);
-        }
-        connection.commit();
-    }
-
-    private boolean contains(URI subject, String property, Object value) {
-        final ValueFactory vf = connection.getValueFactory();
-        Value rdfVal = null;
-        if (value instanceof URI) {
-            rdfVal = vf.createIRI(value.toString());
-        } else if (value instanceof Integer) {
-            rdfVal = vf.createLiteral(value.toString(), XSD.INTEGER);
-        } else if (value instanceof Long) {
-            rdfVal = vf.createLiteral((Long) value);
-        } else if (value instanceof Double) {
-            rdfVal = vf.createLiteral((Double) value);
-        } else if (value instanceof Boolean) {
-            rdfVal = vf.createLiteral((Boolean) value);
-        } else if (value instanceof Date) {
-            rdfVal = vf.createLiteral((Date) value);
-        } else if (value instanceof String) {
-            rdfVal = vf.createLiteral(value.toString());
-        }
-        final RepositoryResult<Statement> res = connection.getStatements(vf.createIRI(subject.toString()), vf.createIRI(property), rdfVal, false);
-        final boolean contains = res.hasNext();
-        res.close();
-        return contains;
-    }
-
-    private void verifyUserAttributes(User user) {
-        assertTrue(contains(user.getUri(), RDF.TYPE, URI.create(Vocabulary.PERSON)));
-        assertTrue(contains(user.getUri(), RDF.TYPE, URI.create(Vocabulary.USER)));
-        assertTrue(contains(user.getUri(), Vocabulary.FIRST_NAME, user.getFirstName()));
-        assertTrue(contains(user.getUri(), Vocabulary.LAST_NAME, user.getLastName()));
-        assertTrue(contains(user.getUri(), Vocabulary.USERNAME, user.getUsername()));
-        assertTrue(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin()));
+    void testDeserializeInstanceWithDataProperties() throws Exception {
+        final String input = Environment.readData("objectWithDataProperties.json");
+        final User result = objectMapper.readValue(input, User.class);
+        assertNotNull(result);
+        final User expected = USERS.get(HALSEY_URI);
+        Environment.verifyUserAttributes(expected, result);
     }
 
     @Test
-    void testSerializeInstanceWithSingularReference() throws Exception {
-        final Employee employee = Generator.generateEmployee();
-        final Organization org = employee.getEmployer();
-        serializeAndStore(employee);
-        verifyUserAttributes(employee);
-        assertTrue(contains(employee.getUri(), Vocabulary.IS_MEMBER_OF, org.getUri()));
-        verifyOrganizationAttributes(org);
+    void testDeserializeInstanceWithSingularObjectProperty() throws Exception {
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Employee result = objectMapper.readValue(input, Employee.class);
+        Environment.verifyUserAttributes(USERS.get(HALSEY_URI), result);
+        assertNotNull(result.getEmployer());
+        verifyOrganizationAttributes(result.getEmployer());
     }
 
-    private void verifyOrganizationAttributes(Organization org) {
-        assertTrue(contains(org.getUri(), RDFS.LABEL, org.getName()));
-        // There is currently a grey zone of representing dates - we're using long timestamp, but RDF4J parses it XML integer
-        assertTrue(contains(org.getUri(), Vocabulary.DATE_CREATED, null));
-        for (String brand : org.getBrands()) {
-            assertTrue(contains(org.getUri(), Vocabulary.BRAND, brand));
+    private void verifyOrganizationAttributes(Organization actual) {
+        assertEquals(ORG_URI, actual.getUri());
+        assertEquals(ORG_NAME, actual.getName());
+        assertNotNull(actual.getDateCreated());
+        for (String b : ORG_BRANDS) {
+            assertTrue(actual.getBrands().contains(b));
         }
     }
 
     @Test
-    void testSerializeInstanceWithPluralReference() throws Exception {
-        final Organization org = Generator.generateOrganization();
-        generateEmployeesForOrganization(org, false);
-        serializeAndStore(org);
-        verifyOrganizationAttributes(org);
-        for (Employee emp : org.getEmployees()) {
-            assertTrue(contains(org.getUri(), Vocabulary.HAS_MEMBER, emp.getUri()));
-            verifyUserAttributes(emp);
-        }
+    void testDeserializeCollectionOfInstances() throws Exception {
+        final String input = Environment.readData("collectionOfInstances.json");
+        final List<Employee> result = objectMapper.readValue(input, new TypeReference<List<Employee>>() {
+        });
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        result.forEach(e -> {
+            final User expected = USERS.get(e.getUri());
+            Environment.verifyUserAttributes(expected, e);
+        });
     }
 
-    private void generateEmployeesForOrganization(Organization org, boolean backwardReference) {
-        for (int i = 0; i < Generator.randomCount(10); i++) {
-            final Employee emp = Generator.generateEmployee();
-            emp.setEmployer(backwardReference ? org : null);
-            org.addEmployee(emp);
-        }
+	@Test
+    void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
+        final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+        result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			}
+			else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+        });
+    }
+
+		@Test
+    	void testDeserializeListWithoutJsonLdDeserializationContext() throws Exception {
+        final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+        result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			}
+			else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+        });
+    }
+
+	@Test
+    void testDeserializeListUnresolvedReferenceWithJsonLdDeserializationContext() {
+        final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		Assertions.assertThrows(UnresolvedReferenceException.class, () -> objectMapper.readValue(input, new TypeReference<List<AbstractCompany>>() {
+		}));
+    }
+
+	@Test
+	void testDeserializeListUnresolvedReferenceWithoutJsonLdDeserializationContext() throws Exception {
+        final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+		final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+        result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(2, company.getEmployees().size()); // John Smith is not here, since it doesn't exist
+			}
+			else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+        });
     }
 
     @Test
-    void testSerializeInstanceWithPluralReferenceAndBackwardReferences() throws Exception {
-        final Organization org = Generator.generateOrganization();
-        generateEmployeesForOrganization(org, true);
-        serializeAndStore(org);
-        verifyOrganizationAttributes(org);
-        for (Employee emp : org.getEmployees()) {
-            assertTrue(contains(org.getUri(), Vocabulary.HAS_MEMBER, emp.getUri()));
-            assertTrue(contains(emp.getUri(), Vocabulary.IS_MEMBER_OF, org.getUri()));
-            verifyUserAttributes(emp);
-        }
-    }
-
-    @Test
-    void testSerializeCollectionOfInstances() throws Exception {
-        final Set<User> users = new HashSet<>();
-        for (int i = 0; i < Generator.randomCount(10); i++) {
-            users.add(Generator.generateUser());
-        }
-        serializeAndStore(users);
-        for (User u : users) {
-            verifyUserAttributes(u);
-        }
+    void testSupportForIgnoringUnknownProperties() throws Exception {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final String input = Environment.readData("objectWithUnknownProperty.json");
+        final User result = objectMapper.readValue(input, User.class);
+        assertNotNull(result);
+        Environment.verifyUserAttributes(USERS.get(HALSEY_URI), result);
     }
 
     /**
-     * Jackson's {@link com.fasterxml.jackson.annotation.JsonTypeInfo} can be ignored, because the
-     * serialized/deserialized objects contain type information by virtue of the JSON-LD {@code @type} attribute.
+     * @see JsonLdSerializationTest#serializationIgnoresJsonTypeInfoConfiguration()
      */
     @Test
-    public void serializationIgnoresJsonTypeInfoConfiguration() throws Exception {
-        final User emp = Generator.generateEmployee();
-        serializeAndStore(emp);
-        assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.PERSON)));
-        assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.USER)));
-        assertTrue(contains(emp.getUri(), RDF.TYPE, URI.create(Vocabulary.EMPLOYEE)));
+    void deserializationIgnoresJsonTypeInfo() throws Exception {
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Employee result = objectMapper.readValue(input, Employee.class);
+        assertNotNull(result);
     }
 
     @Test
-    void serializationSupportsClassesWithoutOWLClassAnnotationButWithTypes() throws Exception {
-        final PersonNoOWLClass person = new PersonNoOWLClass();
-        person.uri = Generator.generateUri();
-        person.label = "test";
-        person.types = Collections.singleton(Vocabulary.PERSON);
-        serializeAndStore(person);
-        assertTrue(contains(person.uri, RDF.TYPE, URI.create(Vocabulary.PERSON)));
-        assertTrue(contains(person.uri, cz.cvut.kbss.jopa.vocabulary.RDFS.LABEL, person.label));
+    void deserializationSupportsPolymorphism() throws Exception {
+        jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.environment.model");
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Person result = objectMapper.readValue(input, Person.class);
+        assertInstanceOf(Employee.class, result);
     }
 
-    private static class PersonNoOWLClass {
+    @Test
+    void deserializationSkipsPropertiesMappedToFieldsWithReadOnlyAccess() throws Exception {
+        final String input = Environment.readData("objectWithReadOnlyProperty.json");
+        final Organization result = objectMapper.readValue(input, Organization.class);
+        assertNotNull(result);
+        assertNull(result.getEmployeeCount());
+    }
+
+    @Test
+    void deserializationSupportsCustomDeserializers() throws Exception {
+        final ValueDeserializer<Boolean> deserializer = spy(new CustomDeserializer());
+        jsonLdModule.registerDeserializer(Boolean.class, deserializer);
+        final String input = Environment.readData("objectWithDataProperties.json");
+        final User result = objectMapper.readValue(input, User.class);
+        assertNotNull(result);
+        assertNull(result.getAdmin());
+        verify(deserializer).deserialize(any(JsonValue.class), any(DeserializationContext.class));
+    }
+
+    static class CustomDeserializer implements ValueDeserializer<Boolean> {
+        @Override
+        public Boolean deserialize(JsonValue map, DeserializationContext<Boolean> deserializationContext) {
+            return null;
+        }
+    }
+
+    @Test
+    void deserializationSupportsAssumedTargetType() throws Exception {
+        jsonLdModule.configure(ConfigParam.ASSUME_TARGET_TYPE, "true");
+        jsonLdModule.configure(ConfigParam.SCAN_PACKAGE, "cz.cvut.kbss.jsonld.jackson.deserialization");
+        final String input = """
+                {
+                  "@context": "https://www.w3.org/ns/activitystreams",
+                  "summary": "Martin created an image",
+                  "type": "Create",
+                  "actor": "http://www.test.example/martin",
+                  "object": "http://example.org/foo.jpg"
+                }
+                """;
+        final Create result = objectMapper.readValue(input, Create.class);
+        assertNotNull(result);
+        assertEquals("http://www.test.example/martin", result.actor.id);
+        assertEquals("http://example.org/foo.jpg", result.object.id);
+        assertEquals("Martin created an image", result.summary);
+    }
+
+	@Test
+    void testDeserializeListWithJsonLdDeserializationContextCustomLoader() throws Exception {
+        final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true").configureObject(ConfigParam.CLASS_LOADER, Thread.currentThread().getContextClassLoader()));
+        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+        result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			}
+			else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+        });
+    }
+
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Create")
+    public static class Create {
 
         @Id
-        private URI uri;
+        private String id;
 
-        @OWLDataProperty(iri = cz.cvut.kbss.jopa.vocabulary.RDFS.LABEL)
-        private String label;
+        @OWLAnnotationProperty(iri = "https://www.w3.org/ns/activitystreams#object")
+        ActivityPubObject object;
 
-        @Types
-        private Set<String> types;
+        @OWLObjectProperty(iri = "https://www.w3.org/ns/activitystreams#actor")
+        ObjectOrLink actor;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#@context")
+        String context;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#type")
+        String type;
+
+        @OWLDataProperty(iri = "https://www.w3.org/ns/activitystreams#summary")
+        String summary;
     }
 
-    @Test
-    void serializationFailsForInstanceWithoutTypeInfo() {
-        final PersonNoOWLClass person = new PersonNoOWLClass();
-        person.uri = Generator.generateUri();
-        person.label = "test";
-        final JsonMappingException result = assertThrows(JsonMappingException.class, () -> serializeAndStore(person));
-        assertThat(result.getCause(), is(instanceOf(MissingTypeInfoException.class)));
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Object")
+    public static class ActivityPubObject {
+        @Id
+        private String id;
     }
 
-    @Test
-    void serializationSkipsFieldsWithWriteOnlyAccess() throws Exception {
-        final User user = Generator.generateUser();
-        user.setPassword("test-117");
-        serializeAndStore(user);
-        assertFalse(contains(user.getUri(), Vocabulary.PASSWORD, null));
-    }
-
-    @Test
-    void serializationSupportsCustomSerializers() throws Exception {
-        final ValueSerializer<Boolean> custom =
-                (value, ctx) -> JsonNodeFactory.createLiteralNode(ctx.getTerm(), value.toString());
-        module.registerSerializer(Boolean.class, custom);
-        final User user = Generator.generateUser();
-        serializeAndStore(user);
-        assertFalse(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin()));
-        assertTrue(contains(user.getUri(), Vocabulary.IS_ADMIN, user.getAdmin().toString()));
-    }
-
-    @Test
-    void serializationReusesContextForCollection() throws Exception {
-        module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT_WITH_CONTEXT);
-        final List<User> users =
-                IntStream.range(0, 3).mapToObj(i -> Generator.generateUser()).collect(Collectors.toList());
-        final String result = objectMapper.writeValueAsString(users);
-        final Object parsed = JsonUtils.fromString(result);
-        assertInstanceOf(Map.class, parsed);
-        final Map<?, ?> map = (Map<?, ?>) parsed;
-        assertThat(map, hasKey(JsonLd.CONTEXT));
-        assertThat(map, hasKey(JsonLd.GRAPH));
-    }
-
-    @Test
-    void serializationOfCollectionOfNonEntitiesFallsBackToBaseJacksonSerializer() throws Exception {
-        final List<URI> values = Arrays.asList(Generator.generateUri(), Generator.generateUri());
-        final String result = objectMapper.writeValueAsString(values);
-        final ObjectMapper baseObjectMapper = new ObjectMapper();
-        final String baseJson = baseObjectMapper.writeValueAsString(values);
-        assertEquals(baseJson, result);
-    }
-
-    @Test
-    void serializationSkipsAttributesListedInJsonIgnoreProperties() throws Exception {
-        final Employee instance = Generator.generateEmployee();
-        instance.setSubordinates(Generator.randomCount(100));
-        serializeAndStore(instance);
-        assertFalse(contains(instance.getUri(), Vocabulary.EMPLOYEE_COUNT, instance.getSubordinates()));
-    }
-
-    @Test
-    void serializationSkipsInheritedAttributesListedInJsonIgnoreProperties() throws Exception {
-        final RestrictedOrganization instance = new RestrictedOrganization(Generator.generateOrganization());
-        instance.setEmployees(Collections.singleton(Generator.generateEmployee()));
-        serializeAndStore(instance);
-        instance.getBrands().forEach(brand -> assertFalse(contains(instance.getUri(), Vocabulary.BRAND, brand)));
-        instance.getEmployees().forEach(e -> assertFalse(contains(instance.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
-    }
-
-    @Test
-    void serializationDoesNotSkipJsonIgnoredPropertiesDeclaredInSubClassWhenParentClassIsSerialized() throws Exception {
-        final Organization organization = Generator.generateOrganization();
-        organization.setEmployees(Collections.singleton(Generator.generateEmployee()));
-        final RestrictedOrganization restricted = new RestrictedOrganization(organization);
-        serializeAndStore(restricted);
-        restricted.getBrands().forEach(brand -> assertFalse(contains(restricted.getUri(), Vocabulary.BRAND, brand)));
-        restricted.getEmployees().forEach(e -> assertFalse(contains(restricted.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
-        connection.clear();
-        serializeAndStore(organization);
-        restricted.getBrands().forEach(brand -> assertTrue(contains(restricted.getUri(), Vocabulary.BRAND, brand)));
-        restricted.getEmployees().forEach(e -> assertTrue(contains(restricted.getUri(), Vocabulary.HAS_MEMBER, e.getUri())));
+    @OWLClass(iri = "https://www.w3.org/ns/activitystreams#Link")
+    public static class ObjectOrLink {
+        @Id
+        private String id;
     }
 }
