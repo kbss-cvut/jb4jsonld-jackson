@@ -17,6 +17,7 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment;
 
+import cz.cvut.kbss.jsonld.jackson.environment.model.CompanyUser;
 import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 
 import java.io.BufferedReader;
@@ -55,5 +56,11 @@ public class Environment {
         assertEquals(expected.getLastName(), actual.getLastName());
         assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getAdmin(), actual.getAdmin());
+    }
+
+	public static void verifyCompanyUserAttributes(CompanyUser expected, CompanyUser actual) {
+        assertEquals(expected.getUri(), actual.getUri());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
     }
 }

@@ -54,7 +54,7 @@ public class JsonLdSerializerModifier extends BeanSerializerModifier {
     }
 
     static boolean isJsonLdCompatible(Class<?> cls) {
-        return BeanAnnotationProcessor.isOwlClassEntity(cls) || BeanAnnotationProcessor.hasTypesField(cls);
+        return BeanAnnotationProcessor.isOwlClassEntity(cls) || BeanAnnotationProcessor.isJsonLdTypeEntity(cls) || BeanAnnotationProcessor.hasTypesField(cls);
     }
 
     @Override
