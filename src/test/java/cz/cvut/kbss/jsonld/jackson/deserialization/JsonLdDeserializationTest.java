@@ -194,7 +194,7 @@ class JsonLdDeserializationTest {
     }
 
 	@Test
-	void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
+	void testDeserializeListWithAbstractClass() throws Exception {
 		final String input = Environment.readData("collectionOfInstancesAbstract.json");
 		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
 		});
