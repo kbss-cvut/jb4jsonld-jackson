@@ -139,6 +139,14 @@ class JsonLdDeserializationTest {
         });
     }
 
+	@Test
+    void testDeserializeCustomClassLoader() throws Exception {
+        jsonLdModule.configureObject(ConfigParam.CLASS_LOADER, Thread.currentThread().getContextClassLoader());
+        final String input = Environment.readData("objectWithSingularReference.json");
+        final Person result = objectMapper.readValue(input, Person.class);
+        assertInstanceOf(Employee.class, result);
+    }
+
     @Test
     void testSupportForIgnoringUnknownProperties() throws Exception {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
