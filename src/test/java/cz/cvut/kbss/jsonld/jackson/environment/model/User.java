@@ -22,12 +22,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
+import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 
 import java.net.URI;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "javaClass")
-@OWLClass(iri = Vocabulary.USER)
+@JsonLdType(iri = Vocabulary.USER)
 public class User extends Person {
 
     @OWLDataProperty(iri = Vocabulary.USERNAME)

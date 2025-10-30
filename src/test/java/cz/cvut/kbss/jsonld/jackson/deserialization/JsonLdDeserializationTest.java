@@ -30,6 +30,9 @@ import cz.cvut.kbss.jsonld.deserialization.DeserializationContext;
 import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Environment;
+import cz.cvut.kbss.jsonld.jackson.environment.model.AbstractCompany;
+import cz.cvut.kbss.jsonld.jackson.environment.model.Company;
+import cz.cvut.kbss.jsonld.jackson.environment.model.CompanyUser;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Person;
@@ -64,6 +67,7 @@ class JsonLdDeserializationTest {
             .create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Sarah+Palmer");
 
     private static final Map<URI, User> USERS = initUsers();
+	private static final Map<URI, CompanyUser> COMPANY_USERS = initCompanyUsers();
 
     private static final URI ORG_URI = URI.create("http://krizik.felk.cvut.cz/ontologies/jb4jsonld#UNSC");
     private static final String ORG_NAME = "UNSC";
@@ -79,6 +83,14 @@ class JsonLdDeserializationTest {
         map.put(PALMER_URI, new User(PALMER_URI, "Sarah", "Palmer", "palmer@unsc.org", false));
         return map;
     }
+
+	private static Map<URI, CompanyUser> initCompanyUsers() {
+		final Map<URI, CompanyUser> map = new HashMap<>();
+        map.put(HALSEY_URI, new CompanyUser(HALSEY_URI, "Catherine", "Halsey"));
+        map.put(LASKY_URI, new CompanyUser(LASKY_URI, "Thomas", "Lasky"));
+        map.put(PALMER_URI, new CompanyUser(PALMER_URI, "Sarah", "Palmer"));
+		return map;
+	}
 
     @BeforeEach
     void setUp() {
@@ -172,6 +184,23 @@ class JsonLdDeserializationTest {
         assertNull(result.getAdmin());
         verify(deserializer).deserialize(any(JsonValue.class), any(DeserializationContext.class));
     }
+
+	@Test
+	void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfInstancesAbstract.json");
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
+		assertEquals(1, result.size());
+		AbstractCompany company = result.get(0);
+		assertInstanceOf(Company.class, company);
+		List<CompanyUser> employees = ((Company) company).getEmployees();
+		employees.forEach(employee -> {
+			final CompanyUser expected = COMPANY_USERS.get(employee.getUri());
+			Environment.verifyCompanyUserAttributes(expected, employee);
+		});
+	}
 
     static class CustomDeserializer implements ValueDeserializer<Boolean> {
         @Override

@@ -17,24 +17,36 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
+import java.net.URI;
+import java.util.List;
 
-@JsonIgnoreProperties({"employees", "brands"})
-@JsonLdType(iri = Vocabulary.ORGANIZATION)
-public class RestrictedOrganization extends Organization {
+@JsonLdType(iri = Vocabulary.COMPANY)
+public class Company extends AbstractCompany {
 
-    public RestrictedOrganization() {
-    }
+	@OWLObjectProperty(iri = Vocabulary.COMPANY_USERS)
+	private List<CompanyUser> employees;
 
-    public RestrictedOrganization(Organization other) {
-        setUri(other.getUri());
-        setDateCreated(other.getDateCreated());
-        setBrands(other.getBrands());
-        setEmployees(other.getEmployees());
-        setAge(other.getAge());
-        setEmployeeCount(other.getEmployeeCount());
-    }
+	public Company() {
+	}
+
+	public Company(URI uri) {
+		super(uri);
+	}
+
+	public Company(URI uri, List<CompanyUser> employees) {
+		super(uri);
+		this.employees = employees;
+	}
+
+
+	public List<CompanyUser> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<CompanyUser> employees) {
+		this.employees = employees;
+	}
 }
