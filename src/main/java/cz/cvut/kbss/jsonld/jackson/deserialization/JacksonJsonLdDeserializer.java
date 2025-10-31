@@ -55,6 +55,8 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
 
     private final Map<Class<?>, ValueDeserializer<?>> commonDeserializers;
 
+	private final JsonLdDeserializer deserializer;
+
     public JacksonJsonLdDeserializer(JsonDeserializer<?> delegatee, Class<?> resultType, Configuration configuration,
                                      Map<Class<?>, ValueDeserializer<?>> commonDeserializers) {
         super(delegatee);
@@ -64,6 +66,7 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
         this.mapper = JsonMapper.builder()
                                 .addModule(new JSONPModule())
                                 .build();
+		this.deserializer = JsonLdDeserializer.createExpandedDeserializer(configuration);
     }
 
     @Override
@@ -80,8 +83,11 @@ public class JacksonJsonLdDeserializer extends DelegatingDeserializer {
                 final JsonDocument doc = JsonDocument.of((JsonStructure) input);
                 input = JsonLd.expand(doc).get();
             }
-            final JsonLdDeserializer deserializer = JsonLdDeserializer.createExpandedDeserializer(configure(ctx));
+			if (ctx instanceof JsonLdDeserializationContext jsonLdDeserializationContext && jsonLdDeserializationContext.getJsonLdDeserializer() == null) {
+				jsonLdDeserializationContext.setJsonLdDeserializer(deserializer);
+			}
             commonDeserializers.forEach((t, d) -> deserializer.registerDeserializer((Class) t, (ValueDeserializer) d));
+			deserializer.updateConfiguration(configure(ctx));
             return deserializer.deserialize(input, resultType);
         } catch (JsonLdError e) {
             throw new JsonLdDeserializationException("Unable to expand the input JSON.", e);

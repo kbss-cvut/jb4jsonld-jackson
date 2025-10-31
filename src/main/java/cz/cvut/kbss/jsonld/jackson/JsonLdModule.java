@@ -77,6 +77,32 @@ public class JsonLdModule extends SimpleModule {
         return this;
     }
 
+	/**
+     * Configure this module with additional parameters.
+     *
+     * @param param Parameter to set
+     * @param value New value of the parameter
+     * @return This instance
+     */
+    public JsonLdModule configure(ConfigParam param, Object value) {
+        Objects.requireNonNull(param);
+        configuration.set(param, value);
+        return this;
+    }
+
+    /**
+     * Configure this module with additional parameters.
+     *
+     * @param param Parameter to set
+     * @param value New value of the parameter
+     * @return This instance
+     */
+    public JsonLdModule configure(String param, Object value) {
+        Objects.requireNonNull(param);
+        configuration.set(param, value);
+        return this;
+    }
+
     /**
      * Registers the specified serializer for the specified type.
      *

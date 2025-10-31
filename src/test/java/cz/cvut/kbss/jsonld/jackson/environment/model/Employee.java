@@ -21,10 +21,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
+import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 
 @JsonIgnoreProperties("subordinates")
-@OWLClass(iri = Vocabulary.EMPLOYEE)
+@JsonLdType(iri = Vocabulary.EMPLOYEE)
 public class Employee extends User {
 
     @OWLObjectProperty(iri = Vocabulary.IS_MEMBER_OF)

@@ -17,24 +17,47 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
+import java.net.URI;
 
-@JsonIgnoreProperties({"employees", "brands"})
-@JsonLdType(iri = Vocabulary.ORGANIZATION)
-public class RestrictedOrganization extends Organization {
+@OWLClass(iri = Vocabulary.COMPANY_USER)
+public class CompanyUser extends AbstractCompany {
 
-    public RestrictedOrganization() {
-    }
+	@OWLDataProperty(iri = Vocabulary.FIRST_NAME)
+	private String firstName;
 
-    public RestrictedOrganization(Organization other) {
-        setUri(other.getUri());
-        setDateCreated(other.getDateCreated());
-        setBrands(other.getBrands());
-        setEmployees(other.getEmployees());
-        setAge(other.getAge());
-        setEmployeeCount(other.getEmployeeCount());
-    }
+	@OWLDataProperty(iri = Vocabulary.LAST_NAME)
+	private String lastName;
+
+	public CompanyUser() {
+	}
+
+	public CompanyUser(URI uri) {
+		super(uri);
+	}
+
+	public CompanyUser(URI uri, String firstName, String lastName) {
+		super(uri);
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 }

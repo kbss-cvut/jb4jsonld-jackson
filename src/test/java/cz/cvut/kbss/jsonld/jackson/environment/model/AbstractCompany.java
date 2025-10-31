@@ -17,24 +17,28 @@
  */
 package cz.cvut.kbss.jsonld.jackson.environment.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import cz.cvut.kbss.jopa.model.annotations.OWLClass;
+import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jsonld.annotation.JsonLdType;
-import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
+import java.net.URI;
 
-@JsonIgnoreProperties({"employees", "brands"})
-@JsonLdType(iri = Vocabulary.ORGANIZATION)
-public class RestrictedOrganization extends Organization {
+@JsonLdType
+public abstract class AbstractCompany {
 
-    public RestrictedOrganization() {
-    }
+	@Id
+	private URI uri;
 
-    public RestrictedOrganization(Organization other) {
-        setUri(other.getUri());
-        setDateCreated(other.getDateCreated());
-        setBrands(other.getBrands());
-        setEmployees(other.getEmployees());
-        setAge(other.getAge());
-        setEmployeeCount(other.getEmployeeCount());
-    }
+	public AbstractCompany() {
+	}
+
+	public AbstractCompany(URI uri) {
+		this.uri = uri;
+	}
+
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 }

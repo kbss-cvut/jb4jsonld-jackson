@@ -20,6 +20,7 @@ package cz.cvut.kbss.jsonld.jackson.environment.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.kbss.jopa.model.annotations.*;
 import cz.cvut.kbss.jopa.vocabulary.RDFS;
+import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 
 import java.net.URI;
@@ -28,7 +29,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@OWLClass(iri = Vocabulary.ORGANIZATION)
+@JsonLdType(iri = Vocabulary.ORGANIZATION)
 public class Organization {
 
     @Id

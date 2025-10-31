@@ -20,11 +20,12 @@ package cz.cvut.kbss.jsonld.jackson.environment.model;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
+import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;
 
 import java.net.URI;
 
-@OWLClass(iri = Vocabulary.PERSON)
+@JsonLdType(iri = Vocabulary.PERSON)
 public class Person {
 
     @Id
