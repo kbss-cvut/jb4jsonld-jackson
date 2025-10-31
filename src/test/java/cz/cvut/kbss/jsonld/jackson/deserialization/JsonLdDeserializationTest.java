@@ -214,77 +214,74 @@ class JsonLdDeserializationTest {
 		});
 	}
 
-		@Test
-		void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
-			final String input = Environment.readData("collectionOfLinkedInstances.json");
-			final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
-			objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
-			final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
-			});
-			assertNotNull(result);
-			assertFalse(result.isEmpty());
-			assertEquals(4, result.size());
-			result.forEach(e -> {
-				if (e instanceof Company company) {
-					assertEquals(3, company.getEmployees().size());
-				}
-				else if (e instanceof CompanyUser companyUser) {
-					final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
-					Environment.verifyCompanyUserAttributes(expected, companyUser);
-				}
-			});
-		}
-
-		@Test
-    	void testDeserializeListWithoutJsonLdDeserializationContext() throws Exception {
-        final String input = Environment.readData("collectionOfLinkedInstances.json");
-		final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
-        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+	@Test
+	void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
 		});
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
 		assertEquals(4, result.size());
-        result.forEach(e -> {
+		result.forEach(e -> {
 			if (e instanceof Company company) {
 				assertEquals(3, company.getEmployees().size());
-			}
-			else if (e instanceof CompanyUser companyUser) {
+			} else if (e instanceof CompanyUser companyUser) {
 				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
 				Environment.verifyCompanyUserAttributes(expected, companyUser);
 			}
-        });
-    }
+		});
+	}
 
 	@Test
-    void testDeserializeListUnresolvedReferenceWithJsonLdDeserializationContext() {
-        final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+	void testDeserializeListWithoutJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+		result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			} else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+		});
+	}
+
+	@Test
+	void testDeserializeListUnresolvedReferenceWithJsonLdDeserializationContext() {
+		final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
 		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
-        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
 		assertThrows(UnresolvedReferenceException.class, () -> objectMapper.readValue(input, new TypeReference<List<AbstractCompany>>() {
 		}));
-    }
+	}
 
 	@Test
 	void testDeserializeListUnresolvedReferenceWithoutJsonLdDeserializationContext() throws Exception {
-        final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+		final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
 		final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
-        final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.DISABLE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
 		});
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
 		assertEquals(4, result.size());
-        result.forEach(e -> {
+		result.forEach(e -> {
 			if (e instanceof Company company) {
 				assertEquals(2, company.getEmployees().size()); // John Smith is not here, since it doesn't exist
-			}
-			else if (e instanceof CompanyUser companyUser) {
+			} else if (e instanceof CompanyUser companyUser) {
 				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
 				Environment.verifyCompanyUserAttributes(expected, companyUser);
 			}
-        });
-    }
+		});
+	}
 
     static class CustomDeserializer implements ValueDeserializer<Boolean> {
         @Override
