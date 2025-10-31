@@ -84,9 +84,9 @@ public class JsonLdModule extends SimpleModule {
      * @param value New value of the parameter
      * @return This instance
      */
-    public JsonLdModule configureObject(ConfigParam param, Object value) {
+    public JsonLdModule configure(ConfigParam param, Object value) {
         Objects.requireNonNull(param);
-        configuration.setObject(param, value);
+        configuration.set(param, value);
         return this;
     }
 
@@ -97,9 +97,9 @@ public class JsonLdModule extends SimpleModule {
      * @param value New value of the parameter
      * @return This instance
      */
-    public JsonLdModule configureObject(String param, Object value) {
+    public JsonLdModule configure(String param, Object value) {
         Objects.requireNonNull(param);
-        configuration.setObject(param, value);
+        configuration.set(param, value);
         return this;
     }
 

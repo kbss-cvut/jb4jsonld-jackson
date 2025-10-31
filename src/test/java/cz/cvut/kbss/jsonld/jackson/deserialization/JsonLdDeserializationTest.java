@@ -133,7 +133,7 @@ class JsonLdDeserializationTest {
     @Test
     void testDeserializeCollectionOfInstances() throws Exception {
         final String input = Environment.readData("collectionOfInstances.json");
-        final List<Employee> result = objectMapper.readValue(input, new TypeReference<List<Employee>>() {
+        final List<Employee> result = objectMapper.readValue(input, new TypeReference<>() {
         });
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -145,7 +145,7 @@ class JsonLdDeserializationTest {
 
 	@Test
     void testDeserializeCustomClassLoader() throws Exception {
-        jsonLdModule.configureObject(ConfigParam.CLASS_LOADER, Thread.currentThread().getContextClassLoader());
+        jsonLdModule.configure(ConfigParam.CLASS_LOADER, Thread.currentThread().getContextClassLoader());
         final String input = Environment.readData("objectWithSingularReference.json");
         final Person result = objectMapper.readValue(input, Person.class);
         assertInstanceOf(Employee.class, result);
