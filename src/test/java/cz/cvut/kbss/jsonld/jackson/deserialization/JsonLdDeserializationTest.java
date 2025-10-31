@@ -20,6 +20,8 @@ package cz.cvut.kbss.jsonld.jackson.deserialization;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.DeserializerFactoryConfig;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
 import cz.cvut.kbss.jopa.model.annotations.OWLClass;
@@ -28,6 +30,7 @@ import cz.cvut.kbss.jopa.model.annotations.OWLObjectProperty;
 import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.deserialization.DeserializationContext;
 import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
+import cz.cvut.kbss.jsonld.exception.UnresolvedReferenceException;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.environment.Environment;
 import cz.cvut.kbss.jsonld.jackson.environment.model.AbstractCompany;
@@ -52,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
@@ -207,6 +211,75 @@ class JsonLdDeserializationTest {
 		employees.forEach(employee -> {
 			final CompanyUser expected = COMPANY_USERS.get(employee.getUri());
 			Environment.verifyCompanyUserAttributes(expected, employee);
+		});
+	}
+
+	@Test
+	void testDeserializeListWithJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.POSTPONE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+		result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			} else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+		});
+	}
+
+	@Test
+	void testDeserializeListWithoutJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfLinkedInstances.json");
+		final ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.POSTPONE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+		result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(3, company.getEmployees().size());
+			} else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
+		});
+	}
+
+	@Test
+	void testDeserializeListUnresolvedReferenceWithJsonLdDeserializationContext() {
+		final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+		final ObjectMapper objectMapper = new ObjectMapper(null, null, new JsonLdDeserializationContext(new BeanDeserializerFactory(new DeserializerFactoryConfig())));
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.POSTPONE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		assertThrows(UnresolvedReferenceException.class, () -> objectMapper.readValue(input, new TypeReference<List<AbstractCompany>>() {
+		}));
+	}
+
+	@Test
+	void testDeserializeListUnresolvedReferenceWithoutJsonLdDeserializationContext() throws Exception {
+		final String input = Environment.readData("collectionOfLinkedInstancesUnresolvedReference.json");
+		final ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JsonLdModule().configure(ConfigParam.POSTPONE_UNRESOLVED_REFERENCES_CHECK, "true"));
+		final List<AbstractCompany> result = objectMapper.readValue(input, new TypeReference<>() {
+		});
+		assertNotNull(result);
+		assertFalse(result.isEmpty());
+		assertEquals(4, result.size());
+		result.forEach(e -> {
+			if (e instanceof Company company) {
+				assertEquals(2, company.getEmployees().size()); // John Smith is not here, since it doesn't exist
+			} else if (e instanceof CompanyUser companyUser) {
+				final CompanyUser expected = COMPANY_USERS.get(companyUser.getUri());
+				Environment.verifyCompanyUserAttributes(expected, companyUser);
+			}
 		});
 	}
 
