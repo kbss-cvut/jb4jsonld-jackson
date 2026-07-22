@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,56 +45,56 @@ class JacksonJsonWriterTest {
     }
 
     @Test
-    void writeNumberByteWritesByte() throws Exception {
+    void writeNumberByteWritesByte() {
         final byte number = 117;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberShortWritesShort() throws Exception {
+    void writeNumberShortWritesShort() {
         final short number = 117;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberIntegerWritesInteger() throws Exception {
+    void writeNumberIntegerWritesInteger() {
         final int number = 117;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberLongWritesLong() throws Exception {
+    void writeNumberLongWritesLong() {
         final long number = System.currentTimeMillis();
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberFloatWritesFloat() throws Exception {
+    void writeNumberFloatWritesFloat() {
         final float number = Float.MIN_VALUE;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberDoubleWritesDouble() throws Exception {
+    void writeNumberDoubleWritesDouble() {
         final double number = Double.MAX_VALUE;
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberBigIntegerWritesBigInteger() throws Exception {
+    void writeNumberBigIntegerWritesBigInteger() {
         final BigInteger number = new BigInteger(Integer.toString(Integer.MAX_VALUE));
         writer.writeNumber(number);
         verify(generator).writeNumber(number);
     }
 
     @Test
-    void writeNumberBigDecimalWritesBigDecimal() throws Exception {
+    void writeNumberBigDecimalWritesBigDecimal() {
         final BigDecimal number = new BigDecimal(Integer.MAX_VALUE);
         writer.writeNumber(number);
         verify(generator).writeNumber(number);

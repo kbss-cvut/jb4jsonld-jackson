@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
 

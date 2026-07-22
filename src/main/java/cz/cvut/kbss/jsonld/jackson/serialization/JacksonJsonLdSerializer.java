@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,10 +54,9 @@ class JacksonJsonLdSerializer<T> extends tools.jackson.databind.ValueSerializer<
     }
 
     private boolean shouldUseBaseSerializer(T value) {
-        if (!(value instanceof Collection)) {
+        if (!(value instanceof Collection<?> col)) {
             return false;
         }
-        final Collection<?> col = (Collection<?>) value;
         if (col.isEmpty()) {
             return false;
         }
