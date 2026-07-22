@@ -3,19 +3,19 @@
     "firstName": "http://xmlns.com/foaf/0.1/firstName",
     "lastName": "http://xmlns.com/foaf/0.1/lastName",
     "accountName": "http://xmlns.com/foaf/0.1/accountName",
-    "isAdmin": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin"
+    "isAdmin": "http://onto.fel.cvut.cz/ontologies/jb4jsonld/isAdmin"
   },
-  "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#Catherine+Halsey",
+  "@id": "http://onto.fel.cvut.cz/ontologies/jb4jsonld/Catherine+Halsey",
   "@type": [
     "http://onto.fel.cvut.cz/ontologies/ufo/Person",
-    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee",
-    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User"
+    "http://onto.fel.cvut.cz/ontologies/jb4jsonld/Employee",
+    "http://onto.fel.cvut.cz/ontologies/jb4jsonld/User"
   ],
   "isAdmin": true,
-  "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isMemberOf": {
-    "@id": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#UNSC",
-    "@type": "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Organization",
-    "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/brand": [
+  "http://onto.fel.cvut.cz/ontologies/jb4jsonld/isMemberOf": {
+    "@id": "http://onto.fel.cvut.cz/ontologies/jb4jsonld/UNSC",
+    "@type": "http://onto.fel.cvut.cz/ontologies/jb4jsonld/Organization",
+    "http://onto.fel.cvut.cz/ontologies/jb4jsonld/brand": [
       "Spartan-II",
       "Mjolnir IV"
     ],

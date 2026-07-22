@@ -17,8 +17,6 @@
  */
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jsonldjava.utils.JsonUtils;
 import cz.cvut.kbss.jopa.model.annotations.Id;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
@@ -46,24 +44,38 @@ import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonLdSerializationTest {
 
@@ -82,8 +94,7 @@ public class JsonLdSerializationTest {
         parser.setRDFHandler(new StatementCopyingHandler(connection));
 
         this.module = new JsonLdModule();
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
+        this.objectMapper = JsonMapper.builder().addModule(module).build();
     }
 
     private void initRepository() {
@@ -253,8 +264,7 @@ public class JsonLdSerializationTest {
         final PersonNoOWLClass person = new PersonNoOWLClass();
         person.uri = Generator.generateUri();
         person.label = "test";
-        final JsonMappingException result = assertThrows(JsonMappingException.class, () -> serializeAndStore(person));
-        assertThat(result.getCause(), is(instanceOf(MissingTypeInfoException.class)));
+        assertThrows(MissingTypeInfoException.class, () -> serializeAndStore(person));
     }
 
     @Test
@@ -290,7 +300,7 @@ public class JsonLdSerializationTest {
     }
 
     @Test
-    void serializationOfCollectionOfNonEntitiesFallsBackToBaseJacksonSerializer() throws Exception {
+    void serializationOfCollectionOfNonEntitiesFallsBackToBaseJacksonSerializer() {
         final List<URI> values = Arrays.asList(Generator.generateUri(), Generator.generateUri());
         final String result = objectMapper.writeValueAsString(values);
         final ObjectMapper baseObjectMapper = new ObjectMapper();

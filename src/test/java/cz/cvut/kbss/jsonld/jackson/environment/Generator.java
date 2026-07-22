@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class Generator {
 
-    public static final String URI_BASE = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#";
+    public static final String URI_BASE = "http://onto.fel.cvut.cz/ontologies/jb4jsonld/";
 
     private static final Random RAND = new Random();
 

@@ -19,25 +19,27 @@ package cz.cvut.kbss.jsonld.jackson.environment;
 
 public class Vocabulary {
 
+    public static final String NAMESPACE = "http://onto.fel.cvut.cz/ontologies/jb4jsonld/";
+
     public static final String PERSON = "http://onto.fel.cvut.cz/ontologies/ufo/Person";
-    public static final String USER = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/User";
-    public static final String EMPLOYEE = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Employee";
-    public static final String ORGANIZATION = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Organization";
+    public static final String USER = NAMESPACE + "User";
+    public static final String EMPLOYEE = NAMESPACE + "Employee";
+    public static final String ORGANIZATION = NAMESPACE + "Organization";
 
     public static final String FIRST_NAME = "http://xmlns.com/foaf/0.1/firstName";
     public static final String LAST_NAME = "http://xmlns.com/foaf/0.1/lastName";
     public static final String USERNAME = "http://xmlns.com/foaf/0.1/accountName";
     public static final String DATE_CREATED = "http://purl.org/dc/terms/created";
-    public static final String IS_MEMBER_OF = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isMemberOf";
-    public static final String HAS_MEMBER = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/hasMember";
-    public static final String BRAND = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/brand";
-    public static final String IS_ADMIN = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/isAdmin";
-    public static final String PASSWORD = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/password";
-    public static final String EMPLOYEE_COUNT = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/employeeCount";
-    public static final String SALARY = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/salary";
-	public static final String COMPANY = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/Company";
-	public static final String COMPANY_USERS = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/companyUsers";
-	public static final String COMPANY_USER = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld/CompanyUser";
+    public static final String IS_MEMBER_OF = NAMESPACE + "isMemberOf";
+    public static final String HAS_MEMBER = NAMESPACE + "hasMember";
+    public static final String BRAND = NAMESPACE + "brand";
+    public static final String IS_ADMIN = NAMESPACE + "isAdmin";
+    public static final String PASSWORD = NAMESPACE + "password";
+    public static final String EMPLOYEE_COUNT = NAMESPACE + "employeeCount";
+    public static final String SALARY = NAMESPACE + "salary";
+	public static final String COMPANY = NAMESPACE + "Company";
+	public static final String COMPANY_USERS = NAMESPACE + "companyUsers";
+	public static final String COMPANY_USER = NAMESPACE + "CompanyUser";
 
     private Vocabulary() {
         throw new AssertionError();

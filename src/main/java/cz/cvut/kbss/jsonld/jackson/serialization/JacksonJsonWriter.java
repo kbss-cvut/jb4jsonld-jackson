@@ -17,9 +17,8 @@
  */
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonGenerator;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -35,32 +34,32 @@ class JacksonJsonWriter implements cz.cvut.kbss.jsonld.serialization.JsonGenerat
     }
 
     @Override
-    public void writeFieldName(String s) throws IOException {
-        jsonGenerator.writeFieldName(s);
+    public void writeFieldName(String s) {
+        jsonGenerator.writeName(s);
     }
 
     @Override
-    public void writeObjectStart() throws IOException {
+    public void writeObjectStart() {
         jsonGenerator.writeStartObject();
     }
 
     @Override
-    public void writeObjectEnd() throws IOException {
+    public void writeObjectEnd() {
         jsonGenerator.writeEndObject();
     }
 
     @Override
-    public void writeArrayStart() throws IOException {
+    public void writeArrayStart() {
         jsonGenerator.writeStartArray();
     }
 
     @Override
-    public void writeArrayEnd() throws IOException {
+    public void writeArrayEnd() {
         jsonGenerator.writeEndArray();
     }
 
     @Override
-    public void writeNumber(Number number) throws IOException {
+    public void writeNumber(Number number) {
         if (number instanceof Integer) {
             jsonGenerator.writeNumber(number.intValue());
         } else if (number instanceof Long) {
@@ -83,17 +82,17 @@ class JacksonJsonWriter implements cz.cvut.kbss.jsonld.serialization.JsonGenerat
     }
 
     @Override
-    public void writeBoolean(boolean b) throws IOException {
+    public void writeBoolean(boolean b) {
         jsonGenerator.writeBoolean(b);
     }
 
     @Override
-    public void writeNull() throws IOException {
+    public void writeNull() {
         jsonGenerator.writeNull();
     }
 
     @Override
-    public void writeString(String s) throws IOException {
+    public void writeString(String s) {
         jsonGenerator.writeString(s);
     }
 }

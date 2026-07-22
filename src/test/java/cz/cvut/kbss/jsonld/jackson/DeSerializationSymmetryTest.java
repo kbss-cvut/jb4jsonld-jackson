@@ -1,6 +1,6 @@
 package cz.cvut.kbss.jsonld.jackson;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import cz.cvut.kbss.jsonld.jackson.environment.Environment;
 import cz.cvut.kbss.jsonld.jackson.environment.Generator;
 import cz.cvut.kbss.jsonld.jackson.environment.model.Employee;
@@ -8,6 +8,7 @@ import cz.cvut.kbss.jsonld.jackson.environment.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.SerializationConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -22,12 +23,11 @@ public class DeSerializationSymmetryTest {
     void setUp() {
         final JsonLdModule module = new JsonLdModule();
         module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT_WITH_CONTEXT);
-        this.objectMapper = new ObjectMapper();
-        objectMapper.registerModule(module);
+        this.objectMapper = JsonMapper.builder().addModule(module).build();
     }
 
     @Test
-    void deSerializationIsSymmetricForSingleObjectWithDataAttributes() throws Exception {
+    void deSerializationIsSymmetricForSingleObjectWithDataAttributes() {
         final User user = Generator.generateUser();
 
         final String json = objectMapper.writeValueAsString(user);
@@ -36,7 +36,7 @@ public class DeSerializationSymmetryTest {
     }
 
     @Test
-    void deSerializationIsSymmetricForObjectWithBackwardReference() throws Exception {
+    void deSerializationIsSymmetricForObjectWithBackwardReference() {
         final Employee employee = Generator.generateEmployee();
         employee.getEmployer().addEmployee(employee);
 

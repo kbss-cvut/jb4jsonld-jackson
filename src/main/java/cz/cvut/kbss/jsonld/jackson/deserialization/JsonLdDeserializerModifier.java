@@ -17,18 +17,17 @@
  */
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.BeanAnnotationProcessor;
 import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
 import cz.cvut.kbss.jsonld.deserialization.ValueDeserializer;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.deser.ValueDeserializerModifier;
 
 import java.util.Map;
 
-public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
+public class JsonLdDeserializerModifier extends ValueDeserializerModifier {
 
     private final Configuration configuration;
 
@@ -42,9 +41,10 @@ public class JsonLdDeserializerModifier extends BeanDeserializerModifier {
     }
 
     @Override
-    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc,
-                                                  JsonDeserializer<?> deserializer) {
-		if (BeanAnnotationProcessor.isMappedType(beanDesc.getBeanClass())) {
+    public tools.jackson.databind.ValueDeserializer<?> modifyDeserializer(DeserializationConfig config,
+                                                                          BeanDescription.Supplier beanDesc,
+                                                                          tools.jackson.databind.ValueDeserializer<?> deserializer) {
+        if (BeanAnnotationProcessor.isMappedType(beanDesc.getBeanClass())) {
             return new JacksonJsonLdDeserializer(deserializer, beanDesc.getBeanClass(), configuration,
                                                  commonDeserializers);
         }

@@ -17,7 +17,8 @@
  */
 package cz.cvut.kbss.jsonld.jackson;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.module.SimpleModule;
 import cz.cvut.kbss.jsonld.ConfigParam;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.common.PropertyAccessResolver;
@@ -26,8 +27,10 @@ import cz.cvut.kbss.jsonld.jackson.common.JsonPropertyAccessResolver;
 import cz.cvut.kbss.jsonld.jackson.deserialization.JsonLdDeserializerModifier;
 import cz.cvut.kbss.jsonld.jackson.serialization.JsonLdSerializerModifier;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
+import tools.jackson.datatype.jsonp.JSONPModule;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -131,5 +134,10 @@ public class JsonLdModule extends SimpleModule {
         Objects.requireNonNull(deserializer);
         commonDeserializers.put(forType, deserializer);
         return this;
+    }
+
+    @Override
+    public Iterable<? extends JacksonModule> getDependencies() {
+        return List.of(new JSONPModule());
     }
 }

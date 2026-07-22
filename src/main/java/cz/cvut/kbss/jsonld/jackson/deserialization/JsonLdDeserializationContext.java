@@ -19,50 +19,28 @@
 package cz.cvut.kbss.jsonld.jackson.deserialization;
 
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.cfg.CacheProvider;
-import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
-import com.fasterxml.jackson.databind.deser.DeserializerCache;
-import com.fasterxml.jackson.databind.deser.DeserializerFactory;
-import com.fasterxml.jackson.databind.deser.UnresolvedForwardReference;
-import com.fasterxml.jackson.databind.util.ClassUtil;
 import cz.cvut.kbss.jsonld.deserialization.JsonLdDeserializer;
+import tools.jackson.core.FormatSchema;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.InjectableValues;
+import tools.jackson.databind.deser.DeserializationContextExt;
+import tools.jackson.databind.deser.DeserializerCache;
+import tools.jackson.databind.deser.DeserializerFactory;
+import tools.jackson.databind.deser.UnresolvedForwardReference;
 
 /**
  * Copy of {@link Impl}, and adds a reference to ExpandedJsonLdDeserializer so the cleanup method can be called.
  */
-public class JsonLdDeserializationContext extends DefaultDeserializationContext {
-
-	private static final long serialVersionUID = 1L;
+public class JsonLdDeserializationContext extends DeserializationContextExt {
 
 	private JsonLdDeserializer jsonLdDeserializer;
 
-
-	public JsonLdDeserializationContext(DeserializerFactory df) {
-		super(df, new DeserializerCache());
-	}
-
-	private JsonLdDeserializationContext(JsonLdDeserializationContext src,
-										 DeserializationConfig config, JsonParser p, InjectableValues values) {
-		super(src, config, p, values);
-	}
-
-	private JsonLdDeserializationContext(JsonLdDeserializationContext src) {
-		super(src);
-	}
-
-	private JsonLdDeserializationContext(JsonLdDeserializationContext src, DeserializerFactory factory) {
-		super(src, factory);
-	}
-
-	private JsonLdDeserializationContext(JsonLdDeserializationContext src, DeserializationConfig config) {
-		super(src, config);
-	}
-
-	private JsonLdDeserializationContext(JsonLdDeserializationContext src, CacheProvider cp) {
-		super(src, cp);
+	protected JsonLdDeserializationContext(TokenStreamFactory tsf,
+										   DeserializerFactory deserializerFactory, DeserializerCache cache,
+										   DeserializationConfig config, FormatSchema schema,
+										   InjectableValues values) {
+		super(tsf, deserializerFactory, cache, config, schema, values);
 	}
 
 	public JsonLdDeserializer getJsonLdDeserializer() {
@@ -71,33 +49,6 @@ public class JsonLdDeserializationContext extends DefaultDeserializationContext 
 
 	public void setJsonLdDeserializer(JsonLdDeserializer jsonLdDeserializer) {
 		this.jsonLdDeserializer = jsonLdDeserializer;
-	}
-
-	@Override
-	public DefaultDeserializationContext copy() {
-		ClassUtil.verifyMustOverride(JsonLdDeserializationContext.class, this, "copy");
-		return new JsonLdDeserializationContext(this);
-	}
-
-	@Override
-	public DefaultDeserializationContext createInstance(DeserializationConfig config,
-														JsonParser p, InjectableValues values) {
-		return new JsonLdDeserializationContext(this, config, p, values);
-	}
-
-	@Override
-	public DefaultDeserializationContext createDummyInstance(DeserializationConfig config) {
-		return new JsonLdDeserializationContext(this, config);
-	}
-
-	@Override
-	public DefaultDeserializationContext with(DeserializerFactory factory) {
-		return new JsonLdDeserializationContext(this, factory);
-	}
-
-	@Override
-	public DefaultDeserializationContext withCaches(CacheProvider cp) {
-		return new JsonLdDeserializationContext(this, cp);
 	}
 
 	@Override
