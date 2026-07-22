@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,28 +17,26 @@
  */
 package cz.cvut.kbss.jsonld.jackson.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import cz.cvut.kbss.jsonld.Configuration;
 import cz.cvut.kbss.jsonld.serialization.JsonLdSerializer;
 import cz.cvut.kbss.jsonld.serialization.serializer.ValueSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.jsontype.TypeSerializer;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
+class JacksonJsonLdSerializer<T> extends tools.jackson.databind.ValueSerializer<T> {
 
     private final Configuration configuration;
 
     private final Map<Class<?>, ValueSerializer<?>> commonSerializers;
 
-    private final JsonSerializer<T> baseSerializer;
+    private final tools.jackson.databind.ValueSerializer<T> baseSerializer;
 
     JacksonJsonLdSerializer(Configuration configuration, Map<Class<?>, ValueSerializer<?>> commonSerializers,
-                            JsonSerializer<T> baseSerializer) {
+                            tools.jackson.databind.ValueSerializer<T> baseSerializer) {
         this.configuration = configuration;
         this.commonSerializers = commonSerializers;
         this.baseSerializer = baseSerializer;
@@ -46,7 +44,7 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
 
     @Override
     public void serialize(T value, JsonGenerator jsonGenerator,
-                          SerializerProvider serializerProvider) throws IOException {
+                          SerializationContext serializerProvider) {
         if (shouldUseBaseSerializer(value)) {
             baseSerializer.serialize(value, jsonGenerator, serializerProvider);
         } else {
@@ -56,10 +54,9 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
     }
 
     private boolean shouldUseBaseSerializer(T value) {
-        if (!(value instanceof Collection)) {
+        if (!(value instanceof Collection<?> col)) {
             return false;
         }
-        final Collection<?> col = (Collection<?>) value;
         if (col.isEmpty()) {
             return false;
         }
@@ -84,8 +81,8 @@ class JacksonJsonLdSerializer<T> extends JsonSerializer<T> {
     }
 
     @Override
-    public void serializeWithType(T value, JsonGenerator gen, SerializerProvider serializers,
-                                  TypeSerializer typeSer) throws IOException {
+    public void serializeWithType(T value, JsonGenerator gen, SerializationContext serializers,
+                                  TypeSerializer typeSer) {
         serialize(value, gen, serializers);
     }
 }

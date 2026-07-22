@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class Generator {
 
-    public static final String URI_BASE = "http://krizik.felk.cvut.cz/ontologies/jb4jsonld#";
+    public static final String URI_BASE = "http://onto.fel.cvut.cz/ontologies/jb4jsonld/";
 
     private static final Random RAND = new Random();
 

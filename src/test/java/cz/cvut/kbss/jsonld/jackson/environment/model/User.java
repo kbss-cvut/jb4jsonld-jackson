@@ -1,6 +1,6 @@
 /*
  * JB4JSON-LD Jackson
- * Copyright (C) 2025 Czech Technical University in Prague
+ * Copyright (C) 2026 Czech Technical University in Prague
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,6 @@ package cz.cvut.kbss.jsonld.jackson.environment.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import cz.cvut.kbss.jopa.model.annotations.OWLAnnotationProperty;
-import cz.cvut.kbss.jopa.model.annotations.OWLClass;
 import cz.cvut.kbss.jopa.model.annotations.OWLDataProperty;
 import cz.cvut.kbss.jsonld.annotation.JsonLdType;
 import cz.cvut.kbss.jsonld.jackson.environment.Vocabulary;

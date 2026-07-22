@@ -17,7 +17,11 @@ Use `@OWLDataProperty` to annotate data fields and `@OWLObjectProperty` to annot
 
 To integrate the library with Jackson, register a `cz.cvut.kbss.jsonld.jackson.JsonLdModule` in Jackson's `ObjectMapper` like this:
 
-`objectMapper.registerModule(new JsonLdModule());`
+```java
+ObjectMapper mapper = JsonMapper.builder()
+        .addModule(new JsonLdModule())
+        .build();
+```
 
 and you should be good to go. See the example application in [example](/example) for a minimalist demo of using JB4JSON-LD Jackson.
 
@@ -45,7 +49,7 @@ module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPAC
 
 ## Deserialization
 
-Since we are using jsonld-java to first process the incoming JSON-LD, it does not matter in which form (expanded, framed, flattened) the
+Since we are using Titanium JSON-LD to first process the incoming JSON-LD, it does not matter in which form (expanded, framed, flattened) the
 input is.
 
 ## Getting JB4JSON-LD-Jackson
