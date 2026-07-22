@@ -18,15 +18,20 @@
 package cz.cvut.kbss.jsonld.jackson.example;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import cz.cvut.kbss.jsonld.jackson.JsonLdModule;
 import cz.cvut.kbss.jsonld.jackson.example.model.Organization;
 import cz.cvut.kbss.jsonld.jackson.example.model.User;
 import cz.cvut.kbss.jsonld.jackson.serialization.SerializationConstants;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -72,20 +77,22 @@ public class Example {
     }
 
     private ObjectMapper initObjectMapper() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        // Include only non-null values in serialization
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // Pretty print serialization output
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        // Ignore unknown properties in deserialization input
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         // Here we create the JSON-LD serialization/deserialization module
         final JsonLdModule module = new JsonLdModule();
         // Select the serialization output form
         module.configure(SerializationConstants.FORM, SerializationConstants.FORM_COMPACT_WITH_CONTEXT);
-        // Register the module
-        objectMapper.registerModule(module);
-        return objectMapper;
+        return JsonMapper.builder()
+                         // Pretty print serialization output
+                         .enable(SerializationFeature.INDENT_OUTPUT)
+                         // Ignore unknown properties in deserialization input
+                         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                         // Include only non-null values in serialization
+                         .changeDefaultPropertyInclusion(inclusion ->
+                                                                 inclusion.withValueInclusion(
+                                                                         JsonInclude.Include.NON_NULL))
+                         // Register the module
+                         .addModule(module)
+                         .build();
     }
 
     private static void printHelp() {
@@ -93,8 +100,10 @@ public class Example {
         System.out.println("1. 'slu' - serialize a list of User objects.");
         System.out.println("2. 'su' - serialize a single User instance.");
         System.out.println("3. 'so' - serialize a single Organization referencing a list of member Users.");
-        System.out.println("4. 'du' - deserialize a single User, optionally provide path to an input file as the second argument.");
-        System.out.println("5. 'do' - deserialize a single Organization, optionally provide path to an input file as the second argument.");
+        System.out.println(
+                "4. 'du' - deserialize a single User, optionally provide path to an input file as the second argument.");
+        System.out.println(
+                "5. 'do' - deserialize a single Organization, optionally provide path to an input file as the second argument.");
     }
 
     private static String loadDeserializationInput(String[] args, String fallback) throws IOException {
