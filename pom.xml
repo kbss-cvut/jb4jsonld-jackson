@@ -17,8 +17,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.17.0</cz.cvut.kbss.jb4jsonld.version>
-        <jackson.version>3.2.1</jackson.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.18.0</cz.cvut.kbss.jb4jsonld.version>
+        <jackson.version>3.2.3</jackson.version>
 
         <org.junit.jupiter.version>6.1.2</org.junit.jupiter.version>
         <org.mockito.version>5.23.0</org.mockito.version>
@@ -163,6 +163,7 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
+                            <checksums>required</checksums>
                         </configuration>
                     </plugin>
                 </plugins>
