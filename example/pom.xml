@@ -13,10 +13,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
 
-        <cz.cvut.kbss.jb4jsonld.version>0.18.1</cz.cvut.kbss.jb4jsonld.version>
+        <cz.cvut.kbss.jb4jsonld.version>0.19.0</cz.cvut.kbss.jb4jsonld.version>
     </properties>
 
     <dependencies>
@@ -33,7 +33,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.16.0</version>
             </plugin>
 
             <!-- Run the example -->
